@@ -1,0 +1,19 @@
+Package: oceandf
+Title: Read 'ODF' (Ocean Data File) Files
+Version: 0.0.0.9000
+Authors@R: 
+    person(given = "Dewey",
+           family = "Dunnington",
+           role = c("aut", "cre"),
+           email = "dewey.dunnington@dfo-mpo.gc.ca",
+           comment = c(ORCID = "0000-0002-9415-4582"))
+Description: Reads 'ODF' (Ocean Data File) file table information
+  as a data frame and header information as a list.
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: 
+    rlang,
+    glue
