@@ -5,7 +5,6 @@
 \alias{read_odf_colmeta}
 \alias{read_odf_header}
 \alias{read_odf_header_lines}
-\alias{odf_guess}
 \title{Read 'ODF' files}
 \usage{
 read_odf(file, skip = 0, n_max = Inf)
@@ -15,8 +14,6 @@ read_odf_colmeta(file, header = read_odf_header(file))
 read_odf_header(file, header_lines = read_odf_header_lines(file))
 
 read_odf_header_lines(file, n_header = 1000)
-
-odf_guess()
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or

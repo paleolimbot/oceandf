@@ -7,6 +7,8 @@
 
 [![Lifecycle:
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://www.tidyverse.org/lifecycle/#experimental)
+[![R build
+status](https://github.com/paleolimbot/oceandf/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/oceandf/actions)
 <!-- badges: end -->
 
 The goal of oceandf is to read ODF files. You can already do this using
@@ -32,4 +34,5 @@ This is a basic example which shows you how to solve a common problem:
 library(oceandf)
 read_odf("some_file.odf")
 read_odf_colmeta("some_file.odf")
+read_odf_header("some_file.odf")
 ```

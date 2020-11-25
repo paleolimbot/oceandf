@@ -104,12 +104,6 @@ read_odf_header_lines <- function(file, n_header = 1000) {
   lines[seq_len(which(end_header)[1] - 1)]
 }
 
-#' @rdname read_odf
-#' @export
-odf_guess <- function() {
-  structure(list(), class = "oceandf_guess")
-}
-
 collapse_by_name <- function(x) {
   out_names <- unique(names(x))
   out <- rep(list(NULL), length(out_names))
