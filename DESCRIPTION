@@ -17,6 +17,9 @@ RoxygenNote: 7.1.1
 Imports: 
     rlang,
     glue,
-    readr
+    readr,
+    tibble,
+    vctrs,
+    stringr
 Suggests: 
     testthat
