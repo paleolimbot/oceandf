@@ -4,9 +4,6 @@
 \alias{read_odf}
 \alias{odf_guess_col_names}
 \alias{odf_guess_col_types}
-\alias{read_odf_parameter_header}
-\alias{read_odf_header}
-\alias{read_odf_header_lines}
 \title{Read 'ODF' files}
 \usage{
 read_odf(
@@ -29,20 +26,6 @@ odf_guess_col_types(
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
   file_encoding = "windows-1252"
 )
-
-read_odf_parameter_header(
-  file,
-  header = read_odf_header(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
-)
-
-read_odf_header(
-  file,
-  header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
-)
-
-read_odf_header_lines(file, n_header = 1000, file_encoding = "windows-1252")
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
@@ -56,20 +39,14 @@ using \code{\link[=odf_guess_col_names]{odf_guess_col_names()}}}
 \item{col_types}{A \code{\link[readr:cols]{readr::cols()}} spec or \code{NULL} to guess
 using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 
-\item{n_max}{Maximum number of rows to read.}
+\item{n_max}{Maximum number of rows to read.
+\code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
 (windows-1252) reflects a guess based on a number of example ODF files.}
 
 \item{parameter_header}{A previously read value obtained from
 \code{\link[=read_odf_parameter_header]{read_odf_parameter_header()}}.}
-
-\item{header}{A previously read value obtained from \code{\link[=read_odf_header]{read_odf_header()}}.}
-
-\item{header_lines}{A previously read value obtained from
-\code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
-
-\item{n_header}{The starting guess for number of header lines.}
 }
 \description{
 ODF (Ocean Data) files are whitespace-delimited files
@@ -81,9 +58,5 @@ read_odf(odf_file)
 
 odf_guess_col_names(odf_file)
 odf_guess_col_types(odf_file)
-read_odf_parameter_header(odf_file)
-
-str(read_odf_header_lines(odf_file))
-str(read_odf_header(odf_file))
 
 }

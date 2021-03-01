@@ -9,8 +9,6 @@
 #'   downloaded. See [readr::read_lines()] for a full description of how
 #'   this parameter is interpreted.
 #' @param n_max Maximum number of rows to read.
-#' @param header A previously read value obtained from [read_odf_header()].
-#' @param header_lines A previously read value obtained from
 #'   [read_odf_header_lines()].
 #' @param parameter_header A previously read value obtained from
 #'   [read_odf_parameter_header()].
@@ -18,7 +16,6 @@
 #'   using [odf_guess_col_names()]
 #' @param col_types A [readr::cols()] spec or `NULL` to guess
 #'   using [odf_guess_col_types()]
-#' @param n_header The starting guess for number of header lines.
 #' @param file_encoding The encoding used to encode the file. The default
 #'   (windows-1252) reflects a guess based on a number of example ODF files.
 #'
@@ -30,10 +27,6 @@
 #'
 #' odf_guess_col_names(odf_file)
 #' odf_guess_col_types(odf_file)
-#' read_odf_parameter_header(odf_file)
-#'
-#' str(read_odf_header_lines(odf_file))
-#' str(read_odf_header(odf_file))
 #'
 read_odf <- function(file, col_names = NULL, col_types = NULL,
                      n_max = -1,
@@ -59,7 +52,10 @@ read_odf <- function(file, col_names = NULL, col_types = NULL,
   )
 
   tibble::as_tibble(
-    readr::type_convert(tbl, col_types = col_types)
+    readr::type_convert(
+      tbl,
+      col_types = col_types
+    )
   )
 }
 
@@ -71,7 +67,15 @@ odf_guess_col_names <- function(file,
                                   file_encoding = file_encoding
                                 ),
                                 file_encoding = "windows-1252") {
-  parameter_header$NAME
+  if ("CODE" %in% names(parameter_header)) {
+    names <- parameter_header$CODE
+  } else if ("NAME" %in% names(parameter_header)) {
+    names <- parameter_header$NAME
+  } else {
+    names <- rep("", nrow(parameter_header))
+  }
+
+  vctrs::vec_as_names(names, repair = "unique")
 }
 
 #' @rdname read_odf
@@ -95,73 +99,4 @@ odf_guess_col_types <- function(file,
   readr_types[readr_type_null] <- list(readr::col_guess())
   names(readr_types) <- col_names
   do.call(readr::cols, readr_types)
-}
-
-#' @rdname read_odf
-#' @export
-read_odf_parameter_header <- function(file,
-                                      header = read_odf_header(file, file_encoding = file_encoding),
-                                      file_encoding = "windows-1252") {
-  params <- lapply(header$PARAMETER_HEADER, tibble::as_tibble)
-  params_tbl <- vctrs::vec_rbind(!!! params)
-  params_tbl[] <- lapply(params_tbl, readr::parse_guess)
-  params_tbl
-}
-
-#' @rdname read_odf
-#' @export
-read_odf_header <- function(file,
-                            header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
-                            file_encoding = "windows-1252") {
-  # extract components
-  components <- stringr::str_match(
-    header_lines,
-    "^(\\s*)([A-Za-z0-9_]+\\s*=\\s*)?'?\\s*(.*?)\\s*'?\\s*,?\\s*$"
-  )
-
-  whitespace <- components[, 2]
-  name <- stringr::str_remove(components[, 3], "\\s*=\\s*$")
-  name[is.na(name)] <- ""
-  value <- components[, 4]
-
-  # model with two levels of whitespace: one for top level headers
-  # one for everything else
-  n_whitespace <- stringr::str_length(whitespace)
-  is_top_header <- (n_whitespace == min(n_whitespace)) & (header_lines != whitespace)
-  top_headers <- value[is_top_header]
-  which_top_header <- cumsum(is_top_header)
-
-  parsed <- rep(list(NULL), length(top_headers))
-  for (i in seq_along(top_headers)) {
-    value_i <- value[which_top_header == i][-1]
-    names(value_i) <- name[which_top_header == i][-1]
-    parsed[[i]] <- collapse_by_name(value_i)
-  }
-
-  names(parsed) <- top_headers
-  collapse_by_name(parsed)
-}
-
-#' @rdname read_odf
-#' @export
-read_odf_header_lines <- function(file, n_header = 1000,
-                                  file_encoding = "windows-1252") {
-  header_lines(
-    file,
-    function(x) grepl("\\s*-- DATA --\\s*", x),
-    n_header = n_header,
-    file_encoding = file_encoding
-  )
-}
-
-collapse_by_name <- function(x) {
-  out_names <- unique(names(x))
-  out <- rep(list(NULL), length(out_names))
-  for (i in seq_along(out_names)) {
-    items <- unname(x[names(x) == out_names[i]])
-    out[[i]] <- items
-  }
-
-  names(out) <- out_names
-  out
 }
