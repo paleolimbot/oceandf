@@ -1,15 +1,13 @@
 
 test_that("read_odf_header() works", {
-  skip_if_not(has_test_odf())
-
-  file <- test_odf_file()
+  file <- odf_example("CTD_98911_10P_11_DN.ODF")
   header <- read_odf_header_lines(file)
-  expect_length(header, 881)
-  expect_true(readr::read_lines(file, skip = 881, n_max = 1) == "-- DATA --")
+  expect_length(header, 186)
+  expect_equal(readr::read_lines(file, skip = 186, n_max = 1), " -- DATA --")
 
   # force detection of header size
   header <- read_odf_header_lines(file, n_header = 10)
-  expect_length(header, 881)
+  expect_length(header, 186)
 
   # invalid file
   tmpfile <- tempfile()
@@ -19,25 +17,22 @@ test_that("read_odf_header() works", {
 })
 
 test_that("read_odf_header() works", {
-  skip_if_not(has_test_odf())
-
-  file <- test_odf_file()
+  file <- odf_example("CTD_98911_10P_11_DN.ODF")
   header <- read_odf_header(file)
   expect_true(all(c("PARAMETER_HEADER", "ODF_HEADER") %in% names(header)))
 })
 
 test_that("read_odf_colmeta() works", {
-  skip_if_not(has_test_odf())
-
-  file <- test_odf_file()
+  file <- odf_example("CTD_98911_10P_11_DN.ODF")
   colmeta <- read_odf_colmeta(file)
   expect_is(colmeta, "tbl_df")
 })
 
 test_that("read_odf() works", {
-  skip_if_not(has_test_odf())
-
-  file <- test_odf_file()
+  file <- odf_example("CTD_98911_10P_11_DN.ODF")
   tbl <- read_odf(file)
-  expect_is(tbl$SYTM_01, "POSIXct")
+  expect_identical(
+    colnames(tbl),
+    c("PRES", "TEMP", "COND", "PSAL", "POTM", "SIGP")
+  )
 })

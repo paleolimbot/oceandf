@@ -8,7 +8,7 @@
 #'   .zip will be automatically uncompressed; URLs will be automatically
 #'   downloaded. See [readr::read_lines()] for a full description of how
 #'   this parameter is interpreted.
-#' @param skip Number of non-header rows to skip.
+#' @param skip_data Number of non-header rows to skip.
 #' @param n_max Maximum number of rows to read.
 #' @param header A previously read value obtained from [read_odf_header()].
 #' @param header_lines A previously read value obtained from
@@ -17,12 +17,21 @@
 #'
 #' @export
 #'
-read_odf <- function(file, skip = 0, n_max = Inf) {
+#' @examples
+#' odf_file <- system.file(
+#'   "extdata/CTD_98911_10P_11_DN.ODF",
+#'   package = "oceandf"
+#' )
+#' read_odf(odf_file)
+#' read_odf_colmeta(odf_file)
+#' str(read_odf_header(odf_file))
+#'
+read_odf <- function(file, skip_data = 0, n_max = Inf) {
   header_lines <- read_odf_header_lines(file)
   header <- read_odf_header(file, header_lines)
-  col_header <- unname(header[names(header) == "PARAMETER_HEADER"])
+  col_header <- header$PARAMETER_HEADER
 
-  col_names <- vapply(col_header, "[[", "CODE", FUN.VALUE = character(1))
+  col_names <- vapply(col_header, "[[", "NAME", FUN.VALUE = character(1))
 
   type_names <- vapply(col_header, "[[", "TYPE", FUN.VALUE = character(1))
   readr_types <- list(
@@ -33,19 +42,24 @@ read_odf <- function(file, skip = 0, n_max = Inf) {
   names(readr_types) <- col_names
   col_types <- do.call(readr::cols, readr_types[!vapply(readr_types, is.null, logical(1))])
 
-  readr::read_delim(
-    file, delim = " ", quote = "'", trim_ws = TRUE,
-    col_names = col_names,
+  readr::read_fwf(
+    file, trim_ws = TRUE,
+    col_positions = readr::fwf_empty(
+      file,
+      col_names = col_names,
+      skip = length(header_lines) + 1 + skip_data,
+      n = 100L
+    ),
     col_types = col_types,
-    skip = length(header_lines) + 1 + skip,
-    n_max = n_max
+    skip = length(header_lines) + 1 + skip_data,
+    n_max = n_max,
   )
 }
 
 #' @rdname read_odf
 #' @export
 read_odf_colmeta <- function(file, header = read_odf_header(file)) {
-  params <- lapply(header[names(header) == "PARAMETER_HEADER"], tibble::as_tibble)
+  params <- lapply(header$PARAMETER_HEADER, tibble::as_tibble)
   params_tbl <- vctrs::vec_rbind(!!! unname(params), .names_to = "index")
   params_tbl[-1] <- lapply(params_tbl[-1], readr::parse_guess)
   params_tbl
@@ -80,28 +94,17 @@ read_odf_header <- function(file, header_lines = read_odf_header_lines(file)) {
   }
 
   names(parsed) <- top_headers
-  parsed
+  collapse_by_name(parsed)
 }
 
 #' @rdname read_odf
 #' @export
 read_odf_header_lines <- function(file, n_header = 1000) {
-  stopifnot(n_header > 0)
-
-  lines <- readr::read_lines(file, n_max = n_header)
-  end_header <- grepl("\\s*-- DATA --\\s*", lines)
-
-  while ((length(lines) == n_header) && !any(end_header)) {
-    n_header <- n_header * 2
-    lines <- readr::read_lines(file, n_max = n_header)
-    end_header <- grepl("\\s*-- DATA --\\s*", lines)
-  }
-
-  if (!any(end_header)) {
-    abort(glue("Can't find '-- DATA --' at end of header in '{ file }'.\nIs it an ODF file?"))
-  }
-
-  lines[seq_len(which(end_header)[1] - 1)]
+  header_lines(
+    file,
+    function(x) grepl("\\s*-- DATA --\\s*", x),
+    n_header = n_header
+  )
 }
 
 collapse_by_name <- function(x) {
@@ -114,12 +117,4 @@ collapse_by_name <- function(x) {
 
   names(out) <- out_names
   out
-}
-
-test_odf_file <- function() {
-  Sys.getenv("R_OCEANDF_TEST_ODF", "")
-}
-
-has_test_odf <- function() {
-  test_odf_file() != ""
 }

@@ -7,7 +7,7 @@
 \alias{read_odf_header_lines}
 \title{Read 'ODF' files}
 \usage{
-read_odf(file, skip = 0, n_max = Inf)
+read_odf(file, skip_data = 0, n_max = Inf)
 
 read_odf_colmeta(file, header = read_odf_header(file))
 
@@ -21,7 +21,7 @@ read_odf_header_lines(file, n_header = 1000)
 downloaded. See \code{\link[readr:read_lines]{readr::read_lines()}} for a full description of how
 this parameter is interpreted.}
 
-\item{skip}{Number of non-header rows to skip.}
+\item{skip_data}{Number of non-header rows to skip.}
 
 \item{n_max}{Maximum number of rows to read.}
 
@@ -35,4 +35,14 @@ this parameter is interpreted.}
 \description{
 ODF (Ocean Data) files are whitespace-delimited files
 whose column names and are specified in a loosely formatted header.
+}
+\examples{
+odf_file <- system.file(
+  "extdata/CTD_98911_10P_11_DN.ODF",
+  package = "oceandf"
+)
+read_odf(odf_file)
+read_odf_colmeta(odf_file)
+str(read_odf_header(odf_file))
+
 }
