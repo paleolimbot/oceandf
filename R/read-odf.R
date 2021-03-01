@@ -18,12 +18,9 @@
 #' @export
 #'
 #' @examples
-#' odf_file <- system.file(
-#'   "extdata/CTD_98911_10P_11_DN.ODF",
-#'   package = "oceandf"
-#' )
+#' odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
 #' read_odf(odf_file)
-#' read_odf_colmeta(odf_file)
+#' read_odf_parameter_header(odf_file)
 #' str(read_odf_header(odf_file))
 #'
 read_odf <- function(file, skip_data = 0, n_max = Inf) {
@@ -58,7 +55,7 @@ read_odf <- function(file, skip_data = 0, n_max = Inf) {
 
 #' @rdname read_odf
 #' @export
-read_odf_colmeta <- function(file, header = read_odf_header(file)) {
+read_odf_parameter_header <- function(file, header = read_odf_header(file)) {
   params <- lapply(header$PARAMETER_HEADER, tibble::as_tibble)
   params_tbl <- vctrs::vec_rbind(!!! unname(params), .names_to = "index")
   params_tbl[-1] <- lapply(params_tbl[-1], readr::parse_guess)

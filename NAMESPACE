@@ -2,8 +2,8 @@
 
 export(odf_example)
 export(read_odf)
-export(read_odf_colmeta)
 export(read_odf_header)
 export(read_odf_header_lines)
+export(read_odf_parameter_header)
 importFrom(glue,glue)
 importFrom(rlang,abort)

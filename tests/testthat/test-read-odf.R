@@ -22,9 +22,9 @@ test_that("read_odf_header() works", {
   expect_true(all(c("PARAMETER_HEADER", "ODF_HEADER") %in% names(header)))
 })
 
-test_that("read_odf_colmeta() works", {
+test_that("read_odf_parameter_header() works", {
   file <- odf_example("CTD_98911_10P_11_DN.ODF")
-  colmeta <- read_odf_colmeta(file)
+  colmeta <- read_odf_parameter_header(file)
   expect_is(colmeta, "tbl_df")
 })
 

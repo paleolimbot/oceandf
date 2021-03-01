@@ -2,14 +2,14 @@
 % Please edit documentation in R/read-odf.R
 \name{read_odf}
 \alias{read_odf}
-\alias{read_odf_colmeta}
+\alias{read_odf_parameter_header}
 \alias{read_odf_header}
 \alias{read_odf_header_lines}
 \title{Read 'ODF' files}
 \usage{
 read_odf(file, skip_data = 0, n_max = Inf)
 
-read_odf_colmeta(file, header = read_odf_header(file))
+read_odf_parameter_header(file, header = read_odf_header(file))
 
 read_odf_header(file, header_lines = read_odf_header_lines(file))
 
@@ -37,12 +37,9 @@ ODF (Ocean Data) files are whitespace-delimited files
 whose column names and are specified in a loosely formatted header.
 }
 \examples{
-odf_file <- system.file(
-  "extdata/CTD_98911_10P_11_DN.ODF",
-  package = "oceandf"
-)
+odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
 read_odf(odf_file)
-read_odf_colmeta(odf_file)
+read_odf_parameter_header(odf_file)
 str(read_odf_header(odf_file))
 
 }

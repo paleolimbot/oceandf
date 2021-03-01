@@ -34,9 +34,11 @@ remotes::install_github("paleolimbot/oceandf")
 
 This is a basic example which shows you how to solve a common problem:
 
-```{r example, eval= FALSE}
+```{r example}
 library(oceandf)
-read_odf("some_file.odf")
-read_odf_colmeta("some_file.odf")
-read_odf_header("some_file.odf")
+odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
+
+read_odf(odf_file)
+read_odf_parameter_header(odf_file)
+names(read_odf_header(odf_file))
 ```
