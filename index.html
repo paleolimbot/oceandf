@@ -40,7 +40,7 @@
       <ul class="nav navbar-nav">
 <li>
   <a href="index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
+    <span class="fas fa-home fa-lg"></span>
      
   </a>
 </li>
@@ -51,7 +51,7 @@
 <ul class="nav navbar-nav navbar-right">
 <li>
   <a href="https://github.com/paleolimbot/oceandf/">
-    <span class="fab fa fab fa-github fa-lg"></span>
+    <span class="fab fa-github fa-lg"></span>
      
   </a>
 </li>
@@ -87,9 +87,40 @@
 <p>This is a basic example which shows you how to solve a common problem:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/paleolimbot/oceandf">oceandf</a></span><span class="op">)</span>
-<span class="fu"><a href="reference/read_odf.html">read_odf</a></span><span class="op">(</span><span class="st">"some_file.odf"</span><span class="op">)</span>
-<span class="fu"><a href="reference/read_odf.html">read_odf_colmeta</a></span><span class="op">(</span><span class="st">"some_file.odf"</span><span class="op">)</span>
-<span class="fu"><a href="reference/read_odf.html">read_odf_header</a></span><span class="op">(</span><span class="st">"some_file.odf"</span><span class="op">)</span></code></pre></div>
+<span class="va">odf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/odf_example.html">odf_example</a></span><span class="op">(</span><span class="st">"CTD_98911_10P_11_DN.ODF"</span><span class="op">)</span>
+
+<span class="fu"><a href="reference/read_odf.html">read_odf</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 562 x 6</span>
+<span class="co">#&gt;    PRES      TEMP  COND  PSAL    POTM  SIGP</span>
+<span class="co">#&gt;    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 0.4210  0.509   2.67  31.4  0.509   25.2</span>
+<span class="co">#&gt;  2 0.8000 -0.134   2.68  32.1 -0.134   25.8</span>
+<span class="co">#&gt;  3 0.9890 -0.229   2.68  32.2 -0.229   25.9</span>
+<span class="co">#&gt;  4 1.0840 -0.0914  2.68  32.1 -0.0914  25.8</span>
+<span class="co">#&gt;  5 1.1790  0.317   2.67  31.6  0.317   25.4</span>
+<span class="co">#&gt;  6 1.3680  0.222   2.67  31.7  0.222   25.4</span>
+<span class="co">#&gt;  7 1.3680  0.174   2.67  31.8  0.174   25.5</span>
+<span class="co">#&gt;  8 1.3680 -0.211   2.67  32.1 -0.211   25.8</span>
+<span class="co">#&gt;  9 1.4630 -0.193   2.66  32.0 -0.193   25.7</span>
+<span class="co">#&gt; 10 1.5580 -0.622   2.66  32.4 -0.622   26.0</span>
+<span class="co">#&gt; # ... with 552 more rows</span>
+<span class="fu"><a href="reference/read_odf.html">read_odf_parameter_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 6 x 15</span>
+<span class="co">#&gt;   index TYPE  NAME  UNITS  WMO_CODE NULL_VALUE PRINT_FIELD_WID~ PRINT_DECIMAL_P~</span>
+<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;</span>
+<span class="co">#&gt; 1     1 SING  PRES  decib~ PRES     -.9900000~               11                4</span>
+<span class="co">#&gt; 2     2 SING  TEMP  degre~ TEMP     -.9900000~               11                4</span>
+<span class="co">#&gt; 3     3 SING  COND  mmHo   COND     -.9900000~               11                4</span>
+<span class="co">#&gt; 4     4 SING  PSAL  &lt;NA&gt;   PSAL     -.9900000~               11                4</span>
+<span class="co">#&gt; 5     5 SING  POTM  degre~ POTM     -.9900000~                8                4</span>
+<span class="co">#&gt; 6     6 SING  SIGP  kg/m*~ SIGP     -.9900000~                8                4</span>
+<span class="co">#&gt; # ... with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;dbl&gt;, MAXIMUM_VALUE &lt;dbl&gt;, NUMBER_VALID &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   NUMBER_NULL &lt;dbl&gt;</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="reference/read_odf.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; [1] "ODF_HEADER"        "CRUISE_HEADER"     "EVENT_HEADER"     </span>
+<span class="co">#&gt; [4] "INSTRUMENT_HEADER" "HISTORY_HEADER"    "PARAMETER_HEADER" </span>
+<span class="co">#&gt; [7] "RECORD_HEADER"</span></code></pre></div>
 </div>
 </div>
   </div>
