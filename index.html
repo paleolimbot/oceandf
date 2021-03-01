@@ -104,7 +104,7 @@
 <span class="co">#&gt;  9 1.4630 -0.193   2.66  32.0 -0.193   25.7</span>
 <span class="co">#&gt; 10 1.5580 -0.622   2.66  32.4 -0.622   26.0</span>
 <span class="co">#&gt; # ... with 552 more rows</span>
-<span class="fu"><a href="reference/read_odf.html">read_odf_parameter_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
+<span class="fu"><a href="reference/read_odf_header.html">read_odf_parameter_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 6 x 15</span>
 <span class="co">#&gt;   index TYPE  NAME  UNITS  WMO_CODE NULL_VALUE PRINT_FIELD_WID~ PRINT_DECIMAL_P~</span>
 <span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;</span>
@@ -117,7 +117,7 @@
 <span class="co">#&gt; # ... with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;dbl&gt;, MAXIMUM_VALUE &lt;dbl&gt;, NUMBER_VALID &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   NUMBER_NULL &lt;dbl&gt;</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="reference/read_odf.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="reference/read_odf_header.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span><span class="op">)</span>
 <span class="co">#&gt; [1] "ODF_HEADER"        "CRUISE_HEADER"     "EVENT_HEADER"     </span>
 <span class="co">#&gt; [4] "INSTRUMENT_HEADER" "HISTORY_HEADER"    "PARAMETER_HEADER" </span>
 <span class="co">#&gt; [7] "RECORD_HEADER"</span></code></pre></div>

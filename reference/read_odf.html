@@ -119,13 +119,26 @@ whose column names and are specified in a loosely formatted header." />
 whose column names and are specified in a loosely formatted header.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>read_odf</span><span class='op'>(</span><span class='va'>file</span>, skip_data <span class='op'>=</span> <span class='fl'>0</span>, n_max <span class='op'>=</span> <span class='cn'>Inf</span><span class='op'>)</span>
+    <pre class="usage"><span class='fu'>read_odf</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  col_names <span class='op'>=</span> <span class='cn'>NULL</span>,
+  col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
+  n_max <span class='op'>=</span> <span class='op'>-</span><span class='fl'>1</span>,
+  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+<span class='op'>)</span>
 
-<span class='fu'>read_odf_parameter_header</span><span class='op'>(</span><span class='va'>file</span>, header <span class='op'>=</span> <span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span><span class='op'>)</span>
+<span class='fu'>odf_guess_col_names</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  parameter_header <span class='op'>=</span> <span class='fu'><a href='read_odf_header.html'>read_odf_parameter_header</a></span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+<span class='op'>)</span>
 
-<span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span>, header_lines <span class='op'>=</span> <span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span><span class='op'>)</span><span class='op'>)</span>
-
-<span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, n_header <span class='op'>=</span> <span class='fl'>1000</span><span class='op'>)</span></pre>
+<span class='fu'>odf_guess_col_types</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  col_names <span class='op'>=</span> <span class='fu'>odf_guess_col_names</span><span class='op'>(</span>parameter_header <span class='op'>=</span> <span class='va'>parameter_header</span><span class='op'>)</span>,
+  parameter_header <span class='op'>=</span> <span class='fu'><a href='read_odf_header.html'>read_odf_parameter_header</a></span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -138,25 +151,29 @@ downloaded. See <code><a href='https://readr.tidyverse.org/reference/read_lines.
 this parameter is interpreted.</p></td>
     </tr>
     <tr>
-      <th>skip_data</th>
-      <td><p>Number of non-header rows to skip.</p></td>
+      <th>col_names</th>
+      <td><p>A vector of column names or <code>NULL</code> to guess
+using <code>odf_guess_col_names()</code></p></td>
+    </tr>
+    <tr>
+      <th>col_types</th>
+      <td><p>A <code><a href='https://readr.tidyverse.org/reference/cols.html'>readr::cols()</a></code> spec or <code>NULL</code> to guess
+using <code>odf_guess_col_types()</code></p></td>
     </tr>
     <tr>
       <th>n_max</th>
-      <td><p>Maximum number of rows to read.</p></td>
+      <td><p>Maximum number of rows to read.
+<code><a href='read_odf_header.html'>read_odf_header_lines()</a></code>.</p></td>
     </tr>
     <tr>
-      <th>header</th>
-      <td><p>A previously read value obtained from <code>read_odf_header()</code>.</p></td>
+      <th>file_encoding</th>
+      <td><p>The encoding used to encode the file. The default
+(windows-1252) reflects a guess based on a number of example ODF files.</p></td>
     </tr>
     <tr>
-      <th>header_lines</th>
+      <th>parameter_header</th>
       <td><p>A previously read value obtained from
-<code>read_odf_header_lines()</code>.</p></td>
-    </tr>
-    <tr>
-      <th>n_header</th>
-      <td><p>The starting guess for number of header lines.</p></td>
+<code><a href='read_odf_header.html'>read_odf_parameter_header()</a></code>.</p></td>
     </tr>
     </table>
 
@@ -165,178 +182,29 @@ this parameter is interpreted.</p></td>
     <pre class="examples"><div class='input'><span class='va'>odf_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='odf_example.html'>odf_example</a></span><span class='op'>(</span><span class='st'>"CTD_98911_10P_11_DN.ODF"</span><span class='op'>)</span>
 <span class='fu'>read_odf</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 562 x 6</span><span>
-#&gt;    PRES      TEMP  COND  PSAL    POTM  SIGP
-#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 0.4210  0.509   2.67  31.4  0.509   25.2
-#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 0.8000 -</span><span style='color: #BB0000;'>0.134</span><span>   2.68  32.1 -</span><span style='color: #BB0000;'>0.134</span><span>   25.8
-#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 0.9890 -</span><span style='color: #BB0000;'>0.229</span><span>   2.68  32.2 -</span><span style='color: #BB0000;'>0.229</span><span>   25.9
-#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 1.0840 -</span><span style='color: #BB0000;'>0.091</span><span style='color: #BB0000;text-decoration: underline;'>4</span><span>  2.68  32.1 -</span><span style='color: #BB0000;'>0.091</span><span style='color: #BB0000;text-decoration: underline;'>4</span><span>  25.8
-#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 1.1790  0.317   2.67  31.6  0.317   25.4
-#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 1.3680  0.222   2.67  31.7  0.222   25.4
-#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 1.3680  0.174   2.67  31.8  0.174   25.5
-#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 1.3680 -</span><span style='color: #BB0000;'>0.211</span><span>   2.67  32.1 -</span><span style='color: #BB0000;'>0.211</span><span>   25.8
-#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 1.4630 -</span><span style='color: #BB0000;'>0.193</span><span>   2.66  32.0 -</span><span style='color: #BB0000;'>0.193</span><span>   25.7
-#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 1.5580 -</span><span style='color: #BB0000;'>0.622</span><span>   2.66  32.4 -</span><span style='color: #BB0000;'>0.622</span><span>   26.0
-#&gt; </span><span style='color: #949494;'># … with 552 more rows</span><span></div><div class='input'><span class='fu'>read_odf_parameter_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 6 x 15</span><span>
-#&gt;   index TYPE  NAME  UNITS  WMO_CODE NULL_VALUE PRINT_FIELD_WID… PRINT_DECIMAL_P…
-#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;int&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                 </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>     1 SING  PRES  decib… PRES     -.9900000…               11                4
-#&gt; </span><span style='color: #BCBCBC;'>2</span><span>     2 SING  TEMP  degre… TEMP     -.9900000…               11                4
-#&gt; </span><span style='color: #BCBCBC;'>3</span><span>     3 SING  COND  mmHo   COND     -.9900000…               11                4
-#&gt; </span><span style='color: #BCBCBC;'>4</span><span>     4 SING  PSAL  </span><span style='color: #BB0000;'>NA</span><span>     PSAL     -.9900000…               11                4
-#&gt; </span><span style='color: #BCBCBC;'>5</span><span>     5 SING  POTM  degre… POTM     -.9900000…                8                4
-#&gt; </span><span style='color: #BCBCBC;'>6</span><span>     6 SING  SIGP  kg/m*… SIGP     -.9900000…                8                4
-#&gt; </span><span style='color: #949494;'># … with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;dbl&gt;, MAXIMUM_VALUE &lt;dbl&gt;, NUMBER_VALID &lt;dbl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   NUMBER_NULL &lt;dbl&gt;</span><span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 7
-#&gt;  $ ODF_HEADER       :List of 1
-#&gt;   ..$ :List of 1
-#&gt;   .. ..$ FILE_SPECIFICATION: chr "D1:[MSMITH]CTD_98911_10P_11_DN.ODF"
-#&gt;  $ CRUISE_HEADER    :List of 1
-#&gt;   ..$ :List of 9
-#&gt;   .. ..$ COUNTRY_INSTITUTE_CODE: chr "1810"
-#&gt;   .. ..$ CRUISE_NUMBER         : chr "98911"
-#&gt;   .. ..$ ORGANIZATION          : chr "OCEAN SCIENCES"
-#&gt;   .. ..$ CHIEF_SCIENTIST       : chr "JH"
-#&gt;   .. ..$ START_DATE            : chr "17-NOV-1858 00:00:00.00"
-#&gt;   .. ..$ END_DATE              : chr "17-NOV-1858 00:00:00.00"
-#&gt;   .. ..$ PLATFORM              : chr "LOUIS ST. LAURENT"
-#&gt;   .. ..$ CRUISE_NAME           : chr "BARROW STRAIT"
-#&gt;   .. ..$ CRUISE_DESCRIPTION    : chr ""
-#&gt;  $ EVENT_HEADER     :List of 1
-#&gt;   ..$ :List of 18
-#&gt;   .. ..$ DATA_TYPE         : chr "CTD"
-#&gt;   .. ..$ EVENT_NUMBER      : chr "10P"
-#&gt;   .. ..$ EVENT_QUALIFIER1  : chr "11"
-#&gt;   .. ..$ EVENT_QUALIFIER2  : chr "DN"
-#&gt;   .. ..$ CREATION_DATE     : chr "19-NOV-1998 16:07:31.45"
-#&gt;   .. ..$ ORIG_CREATION_DATE: chr "16-NOV-1998 10:27:10.02"
-#&gt;   .. ..$ START_DATE_TIME   : chr "11-AUG-1998 23:53:19.00"
-#&gt;   .. ..$ END_DATE_TIME     : chr "12-AUG-1998 00:02:40.00"
-#&gt;   .. ..$ INITIAL_LATITUDE  : chr "74.2734"
-#&gt;   .. ..$ INITIAL_LONGITUDE : chr "-90.7461"
-#&gt;   .. ..$ END_LATITUDE      : chr "74.2734"
-#&gt;   .. ..$ END_LONGITUDE     : chr "-90.7461"
-#&gt;   .. ..$ MIN_DEPTH         : chr "0.4"
-#&gt;   .. ..$ MAX_DEPTH         : chr "233.6"
-#&gt;   .. ..$ SAMPLING_INTERVAL : chr "1.00000000"
-#&gt;   .. ..$ SOUNDING          : chr "238.0"
-#&gt;   .. ..$ DEPTH_OFF_BOTTOM  : chr "-99.9"
-#&gt;   .. ..$ EVENT_COMMENTS    : chr [1:2] "16-NOV-1998 10:27:14 HOSE NOT ON PUMP." "16-NOV-1998 10:27:14 STATION REPEATED AUGUST 12."
-#&gt;  $ INSTRUMENT_HEADER:List of 1
-#&gt;   ..$ :List of 4
-#&gt;   .. ..$ INST_TYPE    : chr "Sea-Bird"
-#&gt;   .. ..$ MODEL        : chr ""
-#&gt;   .. ..$ SERIAL_NUMBER: chr "253591-026"
-#&gt;   .. ..$ DESCRIPTION  : chr ""
-#&gt;  $ HISTORY_HEADER   :List of 3
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "16-NOV-1998 10:27:14.59"
-#&gt;   .. ..$ PROCESS      : chr [1:26] "SELECT_FILE,FILE_SPEC=D1:[MSMITH]BRST9810.CNV" "OPEN_ASCII_FILE" "HEADER_LOGGER" "READ_ASCII_DATA,HEADER_LINES=0," ...
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "19-NOV-1998 15:55:53.39"
-#&gt;   .. ..$ PROCESS      : chr [1:8] "SELECT_FILE,FI=D1:[MSMITH.DN]CTD_98911*.ODF" "OPEN_ASCII_FILE" "READ_ASCII_HEADERS" "READ_ASCII_DATA,FILE_FORMAT=ODF" ...
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "19-NOV-1998 16:07:31.49"
-#&gt;   .. ..$ PROCESS      : chr [1:15] "SELECT_FILE,FI=D5:[MSMITH]CTD_98911*.ODF" "OPEN_ASCII_FILE" "READ_ASCII_HEADERS" "READ_ASCII_DATA,FILE_FORMAT=ODF" ...
-#&gt;  $ PARAMETER_HEADER :List of 6
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "PRES"
-#&gt;   .. ..$ UNITS               : chr "decibars"
-#&gt;   .. ..$ WMO_CODE            : chr "PRES"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "0.4210"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "233.6350"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "TEMP"
-#&gt;   .. ..$ UNITS               : chr "degrees C"
-#&gt;   .. ..$ WMO_CODE            : chr "TEMP"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "-1.7735"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "0.5086"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "COND"
-#&gt;   .. ..$ UNITS               : chr "mmHo"
-#&gt;   .. ..$ WMO_CODE            : chr "COND"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "2.5819"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "2.7704"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "PSAL"
-#&gt;   .. ..$ UNITS               : chr ""
-#&gt;   .. ..$ WMO_CODE            : chr "PSAL"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "31.4122"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "33.7702"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "POTM"
-#&gt;   .. ..$ UNITS               : chr "degrees C"
-#&gt;   .. ..$ WMO_CODE            : chr "POTM"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "8"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "-1.7753"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "0.5086"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "SIGP"
-#&gt;   .. ..$ UNITS               : chr "kg/m**3"
-#&gt;   .. ..$ WMO_CODE            : chr "SIGP"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "8"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "25.1871"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "27.1418"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;  $ RECORD_HEADER    :List of 1
-#&gt;   ..$ :List of 3
-#&gt;   .. ..$ NUM_HISTORY: chr "3"
-#&gt;   .. ..$ NUM_CYCLE  : chr "562"
-#&gt;   .. ..$ NUM_PARAM  : chr "6"</div><div class='input'>
+#&gt;     PRES    TEMP  COND  PSAL    POTM  SIGP
+#&gt;    </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'> 1</span><span> 0.421  0.509   2.67  31.4  0.509   25.2
+#&gt; </span><span style='color: #BCBCBC;'> 2</span><span> 0.8   -</span><span style='color: #BB0000;'>0.134</span><span>   2.68  32.1 -</span><span style='color: #BB0000;'>0.134</span><span>   25.8
+#&gt; </span><span style='color: #BCBCBC;'> 3</span><span> 0.989 -</span><span style='color: #BB0000;'>0.229</span><span>   2.68  32.2 -</span><span style='color: #BB0000;'>0.229</span><span>   25.9
+#&gt; </span><span style='color: #BCBCBC;'> 4</span><span> 1.08  -</span><span style='color: #BB0000;'>0.091</span><span style='color: #BB0000;text-decoration: underline;'>4</span><span>  2.68  32.1 -</span><span style='color: #BB0000;'>0.091</span><span style='color: #BB0000;text-decoration: underline;'>4</span><span>  25.8
+#&gt; </span><span style='color: #BCBCBC;'> 5</span><span> 1.18   0.317   2.67  31.6  0.317   25.4
+#&gt; </span><span style='color: #BCBCBC;'> 6</span><span> 1.37   0.222   2.67  31.7  0.222   25.4
+#&gt; </span><span style='color: #BCBCBC;'> 7</span><span> 1.37   0.174   2.67  31.8  0.174   25.5
+#&gt; </span><span style='color: #BCBCBC;'> 8</span><span> 1.37  -</span><span style='color: #BB0000;'>0.211</span><span>   2.67  32.1 -</span><span style='color: #BB0000;'>0.211</span><span>   25.8
+#&gt; </span><span style='color: #BCBCBC;'> 9</span><span> 1.46  -</span><span style='color: #BB0000;'>0.193</span><span>   2.66  32.0 -</span><span style='color: #BB0000;'>0.193</span><span>   25.7
+#&gt; </span><span style='color: #BCBCBC;'>10</span><span> 1.56  -</span><span style='color: #BB0000;'>0.622</span><span>   2.66  32.4 -</span><span style='color: #BB0000;'>0.622</span><span>   26.0
+#&gt; </span><span style='color: #949494;'># … with 552 more rows</span><span></div><div class='input'>
+<span class='fu'>odf_guess_col_names</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "PRES" "TEMP" "COND" "PSAL" "POTM" "SIGP"</div><div class='input'><span class='fu'>odf_guess_col_types</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; cols(
+#&gt;   PRES = col_guess(),
+#&gt;   TEMP = col_guess(),
+#&gt;   COND = col_guess(),
+#&gt;   PSAL = col_guess(),
+#&gt;   POTM = col_guess(),
+#&gt;   SIGP = col_guess()
+#&gt; )</div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
