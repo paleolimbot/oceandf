@@ -2,18 +2,47 @@
 % Please edit documentation in R/read-odf.R
 \name{read_odf}
 \alias{read_odf}
+\alias{odf_guess_col_names}
+\alias{odf_guess_col_types}
 \alias{read_odf_parameter_header}
 \alias{read_odf_header}
 \alias{read_odf_header_lines}
 \title{Read 'ODF' files}
 \usage{
-read_odf(file, skip_data = 0, n_max = Inf)
+read_odf(
+  file,
+  col_names = NULL,
+  col_types = NULL,
+  n_max = -1,
+  file_encoding = "windows-1252"
+)
 
-read_odf_parameter_header(file, header = read_odf_header(file))
+odf_guess_col_names(
+  file,
+  parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
+  file_encoding = "windows-1252"
+)
 
-read_odf_header(file, header_lines = read_odf_header_lines(file))
+odf_guess_col_types(
+  file,
+  col_names = odf_guess_col_names(parameter_header = parameter_header),
+  parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
+  file_encoding = "windows-1252"
+)
 
-read_odf_header_lines(file, n_header = 1000)
+read_odf_parameter_header(
+  file,
+  header = read_odf_header(file, file_encoding = file_encoding),
+  file_encoding = "windows-1252"
+)
+
+read_odf_header(
+  file,
+  header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
+  file_encoding = "windows-1252"
+)
+
+read_odf_header_lines(file, n_header = 1000, file_encoding = "windows-1252")
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
@@ -21,9 +50,19 @@ read_odf_header_lines(file, n_header = 1000)
 downloaded. See \code{\link[readr:read_lines]{readr::read_lines()}} for a full description of how
 this parameter is interpreted.}
 
-\item{skip_data}{Number of non-header rows to skip.}
+\item{col_names}{A vector of column names or \code{NULL} to guess
+using \code{\link[=odf_guess_col_names]{odf_guess_col_names()}}}
+
+\item{col_types}{A \code{\link[readr:cols]{readr::cols()}} spec or \code{NULL} to guess
+using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 
 \item{n_max}{Maximum number of rows to read.}
+
+\item{file_encoding}{The encoding used to encode the file. The default
+(windows-1252) reflects a guess based on a number of example ODF files.}
+
+\item{parameter_header}{A previously read value obtained from
+\code{\link[=read_odf_parameter_header]{read_odf_parameter_header()}}.}
 
 \item{header}{A previously read value obtained from \code{\link[=read_odf_header]{read_odf_header()}}.}
 
@@ -39,7 +78,12 @@ whose column names and are specified in a loosely formatted header.
 \examples{
 odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
 read_odf(odf_file)
+
+odf_guess_col_names(odf_file)
+odf_guess_col_types(odf_file)
 read_odf_parameter_header(odf_file)
+
+str(read_odf_header_lines(odf_file))
 str(read_odf_header(odf_file))
 
 }
