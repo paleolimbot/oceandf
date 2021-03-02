@@ -4,6 +4,7 @@
 \alias{read_odf}
 \alias{odf_guess_col_names}
 \alias{odf_guess_col_types}
+\alias{odf_col_datetime}
 \title{Read 'ODF' files}
 \usage{
 read_odf(
@@ -11,21 +12,23 @@ read_odf(
   col_names = NULL,
   col_types = NULL,
   n_max = -1,
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
 
 odf_guess_col_names(
   file,
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
 
 odf_guess_col_types(
   file,
   col_names = odf_guess_col_names(parameter_header = parameter_header),
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
+
+odf_col_datetime()
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
@@ -43,7 +46,7 @@ using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 \code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
-(windows-1252) reflects a guess based on a number of example ODF files.}
+(UTF-8) reflects a guess based on a number of example ODF files.}
 
 \item{parameter_header}{A previously read value obtained from
 \code{\link[=read_odf_parameter_header]{read_odf_parameter_header()}}.}

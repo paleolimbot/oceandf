@@ -39,7 +39,7 @@ this parameter is interpreted.}
 \item{header_lines}{A previously read value obtained from}
 
 \item{file_encoding}{The encoding used to encode the file. The default
-(windows-1252) reflects a guess based on a number of example ODF files.}
+(UTF-8) reflects a guess based on a number of example ODF files.}
 
 \item{col_types}{A \code{\link[readr:cols]{readr::cols()}} spec or \code{NULL} to guess
 using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
