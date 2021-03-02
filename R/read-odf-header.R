@@ -24,7 +24,7 @@
 #'
 read_odf_header <- function(file,
                             header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
-                            file_encoding = "UTF-8") {
+                            file_encoding = "latin1") {
   # extract components
   components <- stringr::str_match(
     header_lines,
@@ -58,7 +58,7 @@ read_odf_header <- function(file,
 #' @export
 read_odf_parameter_header <- function(file, col_types = readr::cols(),
                                       header = read_odf_header(file, file_encoding = file_encoding),
-                                      file_encoding = "UTF-8") {
+                                      file_encoding = "latin1") {
   read_odf_header_tbl(
     file,
     "PARAMETER_HEADER",
@@ -72,7 +72,7 @@ read_odf_parameter_header <- function(file, col_types = readr::cols(),
 #' @export
 read_odf_header_tbl <- function(file, which, col_types = NULL,
                                 header = read_odf_header(file, file_encoding = file_encoding),
-                                file_encoding = "UTF-8") {
+                                file_encoding = "latin1") {
   if (!isTRUE(which %in% names(header))) {
     warning(glue::glue("Header '{ which[1] }' is missing."), immediate. = TRUE)
     return(tibble::tibble())
@@ -157,7 +157,7 @@ odf_header_cols_default <- function(...) {
 #' @rdname read_odf_header
 #' @export
 read_odf_header_lines <- function(file, n_header = 1000,
-                                  file_encoding = "UTF-8") {
+                                  file_encoding = "latin1") {
   header_lines(
     file,
     function(x) grepl("\\s*-- DATA --\\s*", x),

@@ -11,20 +11,20 @@ read_odf(
   col_names = NULL,
   col_types = NULL,
   n_max = -1,
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 
 odf_guess_col_names(
   file,
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 
 odf_guess_col_types(
   file,
   col_names = odf_guess_col_names(parameter_header = parameter_header),
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 }
 \arguments{
@@ -43,14 +43,15 @@ using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 \code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
-(UTF-8) reflects a guess based on a number of example ODF files.}
+(latin1) is used to prevent an error involving invalid characters
+that are common in ODF files.}
 
 \item{parameter_header}{A previously read value obtained from
 \code{\link[=read_odf_parameter_header]{read_odf_parameter_header()}}.}
 }
 \description{
 ODF (Ocean Data) files are whitespace-delimited files
-whose column names and are specified in a loosely formatted header.
+whose column names and are specified in a well-formatted header.
 }
 \examples{
 odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")

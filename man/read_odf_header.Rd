@@ -12,14 +12,14 @@
 read_odf_header(
   file,
   header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 
 read_odf_parameter_header(
   file,
   col_types = readr::cols(),
   header = read_odf_header(file, file_encoding = file_encoding),
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 
 read_odf_header_tbl(
@@ -27,14 +27,14 @@ read_odf_header_tbl(
   which,
   col_types = NULL,
   header = read_odf_header(file, file_encoding = file_encoding),
-  file_encoding = "UTF-8"
+  file_encoding = "latin1"
 )
 
 odf_col_datetime()
 
 odf_header_cols_default(...)
 
-read_odf_header_lines(file, n_header = 1000, file_encoding = "UTF-8")
+read_odf_header_lines(file, n_header = 1000, file_encoding = "latin1")
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
@@ -46,7 +46,8 @@ this parameter is interpreted.}
 \code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
-(UTF-8) reflects a guess based on a number of example ODF files.}
+(latin1) is used to prevent an error involving invalid characters
+that are common in ODF files.}
 
 \item{col_types}{A \code{\link[readr:cols]{readr::cols()}} spec or \code{NULL} to guess
 using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
