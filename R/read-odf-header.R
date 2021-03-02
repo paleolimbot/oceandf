@@ -36,10 +36,14 @@ read_odf_header <- function(file,
   name[is.na(name)] <- ""
   value <- components[, 4]
 
-  # model with two levels of whitespace: one for top level headers
-  # one for everything else
+  # Can model with two levels of whitespace: one for top level headers
+  # and one for everything else OR declare a new top-level header
+  # whenever the indentation decreases. The second appears to be
+  # more robust with respect to slightly mangled files.
+
   n_whitespace <- stringr::str_length(whitespace)
-  is_top_header <- (n_whitespace == min(n_whitespace)) & (header_lines != whitespace)
+  # is_top_header <- (n_whitespace == min(n_whitespace)) & (header_lines != whitespace)
+  is_top_header <- c(TRUE, diff(n_whitespace) < 0)
   top_headers <- value[is_top_header]
   which_top_header <- cumsum(is_top_header)
 

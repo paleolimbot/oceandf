@@ -22,6 +22,11 @@ test_that("read_odf_header() works", {
   expect_true(all(c("PARAMETER_HEADER", "ODF_HEADER") %in% names(header)))
 })
 
+test_that("read_odf_header() works when whitespace isn't constant", {
+  file <- odf_example("CTD_PRD2002-001_26_1_DN.ODF")
+  expect_vector(read_odf_header(file)$INSTRUMENT_HEADER, list())
+})
+
 test_that("read_odf_parameter_header() works", {
   file <- odf_example("CTD_98911_10P_11_DN.ODF")
   colmeta <- read_odf_parameter_header(file)
@@ -32,7 +37,7 @@ test_that("read_odf_header_tbl() works", {
 
   files <- c(
     odf_example("CTD_98911_10P_11_DN.ODF"),
-    # odf_example("CTD_PRD2002-001_26_1_DN.ODF"),
+    odf_example("CTD_PRD2002-001_26_1_DN.ODF"),
     odf_example("CTD_PRD2003001_1482_313_UP.ODF"),
     odf_example("MADCP_98911_1281_0505-78_7200.ODF")
   )
