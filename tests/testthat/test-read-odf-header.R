@@ -103,5 +103,12 @@ test_that("read_odf_header_tbl() works", {
 
     record <- read_odf_header_tbl(file, "RECORD_HEADER")
     expect_vector(record$NUM_PARAM, double())
+
+    if ("POLYNOMIAL_CAL_HEADER" %in% names(read_odf_header(file))) {
+      cal <- read_odf_header_tbl(file, "POLYNOMIAL_CAL_HEADER")
+      expect_vector(cal$CALIBRATION_DATE, vctrs::new_datetime(tzone = "UTC"))
+      expect_vector(cal$APPLICATION_DATE, vctrs::new_datetime(tzone = "UTC"))
+      expect_vector(cal$NUMBER_COEFFICIENTS, double())
+    }
   }
 })

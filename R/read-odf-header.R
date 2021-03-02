@@ -148,6 +148,11 @@ odf_header_cols_default <- function(...) {
     NUM_CYCLE = readr::col_double(),
     NUM_PARAM = readr::col_double(),
 
+    # polynomial cal header
+    CALIBRATION_DATE = odf_col_datetime(),
+    APPLICATION_DATE = odf_col_datetime(),
+    NUMBER_COEFFICIENTS = readr::col_double(),
+
     .default = readr::col_character()
   )
 
