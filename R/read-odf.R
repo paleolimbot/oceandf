@@ -104,9 +104,3 @@ odf_guess_col_types <- function(file,
   names(readr_types) <- col_names
   do.call(readr::cols, readr_types)
 }
-
-#' @rdname read_odf
-#' @export
-odf_col_datetime <- function() {
-  readr::col_datetime("%d-%b-%Y %H:%M:%OS")
-}

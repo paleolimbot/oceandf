@@ -4,31 +4,37 @@
 \alias{read_odf_header}
 \alias{read_odf_parameter_header}
 \alias{read_odf_header_tbl}
+\alias{odf_col_datetime}
+\alias{odf_header_cols_default}
 \alias{read_odf_header_lines}
 \title{Read ODF header information}
 \usage{
 read_odf_header(
   file,
   header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
 
 read_odf_parameter_header(
   file,
   col_types = readr::cols(),
   header = read_odf_header(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
 
 read_odf_header_tbl(
   file,
   which,
-  col_types = readr::cols(),
+  col_types = NULL,
   header = read_odf_header(file, file_encoding = file_encoding),
-  file_encoding = "windows-1252"
+  file_encoding = "UTF-8"
 )
 
-read_odf_header_lines(file, n_header = 1000, file_encoding = "windows-1252")
+odf_col_datetime()
+
+odf_header_cols_default(...)
+
+read_odf_header_lines(file, n_header = 1000, file_encoding = "UTF-8")
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
@@ -36,7 +42,8 @@ read_odf_header_lines(file, n_header = 1000, file_encoding = "windows-1252")
 downloaded. See \code{\link[readr:read_lines]{readr::read_lines()}} for a full description of how
 this parameter is interpreted.}
 
-\item{header_lines}{A previously read value obtained from}
+\item{header_lines}{A previously read value obtained from
+\code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
 (UTF-8) reflects a guess based on a number of example ODF files.}
@@ -46,7 +53,12 @@ using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 
 \item{header}{A previously read value obtained from \code{\link[=read_odf_header]{read_odf_header()}}.}
 
-\item{which}{The header name (e.g., "PARAMETER_HEADER")}
+\item{which}{The header name (e.g., "PARAMETER_HEADER"). Most ODF
+files have an ODF_HEADER, a CRUISE_HEADER, EVENT_HEADER,
+INSTRUMENT_HEADER, HISTORY_HEADER, PARAMETER_HEADER, and
+RECORD_HEADER.}
+
+\item{...}{Overrides for the default column types.}
 
 \item{n_header}{The starting guess for number of header lines.}
 }

@@ -4,7 +4,6 @@
 \alias{read_odf}
 \alias{odf_guess_col_names}
 \alias{odf_guess_col_types}
-\alias{odf_col_datetime}
 \title{Read 'ODF' files}
 \usage{
 read_odf(
@@ -27,8 +26,6 @@ odf_guess_col_types(
   parameter_header = read_odf_parameter_header(file, file_encoding = file_encoding),
   file_encoding = "UTF-8"
 )
-
-odf_col_datetime()
 }
 \arguments{
 \item{file}{A file, URL, or connection. Files ending in .gz, .bz2, .xz, or
