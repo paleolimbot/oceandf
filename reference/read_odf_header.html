@@ -120,25 +120,29 @@
     <pre class="usage"><span class='fu'>read_odf_header</span><span class='op'>(</span>
   <span class='va'>file</span>,
   header_lines <span class='op'>=</span> <span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
-  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+  file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
 <span class='fu'>read_odf_parameter_header</span><span class='op'>(</span>
   <span class='va'>file</span>,
   col_types <span class='op'>=</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='op'>(</span><span class='op'>)</span>,
   header <span class='op'>=</span> <span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
-  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+  file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
 <span class='fu'>read_odf_header_tbl</span><span class='op'>(</span>
   <span class='va'>file</span>,
   <span class='va'>which</span>,
-  col_types <span class='op'>=</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='op'>(</span><span class='op'>)</span>,
+  col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
   header <span class='op'>=</span> <span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
-  file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span>
+  file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
-<span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, n_header <span class='op'>=</span> <span class='fl'>1000</span>, file_encoding <span class='op'>=</span> <span class='st'>"windows-1252"</span><span class='op'>)</span></pre>
+<span class='fu'>odf_col_datetime</span><span class='op'>(</span><span class='op'>)</span>
+
+<span class='fu'>odf_header_cols_default</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, n_header <span class='op'>=</span> <span class='fl'>1000</span>, file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -152,12 +156,14 @@ this parameter is interpreted.</p></td>
     </tr>
     <tr>
       <th>header_lines</th>
-      <td><p>A previously read value obtained from</p></td>
+      <td><p>A previously read value obtained from
+<code>read_odf_header_lines()</code>.</p></td>
     </tr>
     <tr>
       <th>file_encoding</th>
       <td><p>The encoding used to encode the file. The default
-(windows-1252) reflects a guess based on a number of example ODF files.</p></td>
+(latin1) is used to prevent an error involving invalid characters
+that are common in ODF files.</p></td>
     </tr>
     <tr>
       <th>col_types</th>
@@ -170,7 +176,14 @@ using <code><a href='read_odf.html'>odf_guess_col_types()</a></code></p></td>
     </tr>
     <tr>
       <th>which</th>
-      <td><p>The header name (e.g., "PARAMETER_HEADER")</p></td>
+      <td><p>The header name (e.g., "PARAMETER_HEADER"). Most ODF
+files have an ODF_HEADER, a CRUISE_HEADER, EVENT_HEADER,
+INSTRUMENT_HEADER, HISTORY_HEADER, PARAMETER_HEADER, and
+RECORD_HEADER.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>Overrides for the default column types.</p></td>
     </tr>
     <tr>
       <th>n_header</th>
@@ -196,11 +209,11 @@ using <code><a href='read_odf.html'>odf_guess_col_types()</a></code></p></td>
 #&gt; </span><span style='color: #949494;'>#   NUMBER_NULL &lt;dbl&gt;</span><span></div><div class='input'>
 <span class='fu'>read_odf_header_tbl</span><span class='op'>(</span><span class='va'>odf_file</span>, <span class='st'>"CRUISE_HEADER"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 9</span><span>
-#&gt;   COUNTRY_INSTITUTE_… CRUISE_NUMBER ORGANIZATION  CHIEF_SCIENTIST START_DATE    
-#&gt;                 </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>           </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         
-#&gt; </span><span style='color: #BCBCBC;'>1</span><span>                </span><span style='text-decoration: underline;'>1</span><span>810         </span><span style='text-decoration: underline;'>98</span><span>911 OCEAN SCIENC… JH              17-NOV-1858 0…
-#&gt; </span><span style='color: #949494;'># … with 4 more variables: END_DATE &lt;chr&gt;, PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   CRUISE_DESCRIPTION &lt;lgl&gt;</span><span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
+#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION   CHIEF_SCIENTIST
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 1810                   98911         OCEAN SCIENCES JH             
+#&gt; </span><span style='color: #949494;'># … with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;, PLATFORM &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span><span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt;  chr [1:186] " ODF_HEADER," ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; List of 7
 #&gt;  $ ODF_HEADER       :List of 1
