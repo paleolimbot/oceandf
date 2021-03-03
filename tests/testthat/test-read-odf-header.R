@@ -39,7 +39,8 @@ test_that("read_odf_header_tbl() works", {
     odf_example("CTD_98911_10P_11_DN.ODF"),
     odf_example("CTD_PRD2002-001_26_1_DN.ODF"),
     odf_example("CTD_PRD2003001_1482_313_UP.ODF"),
-    odf_example("MADCP_98911_1281_0505-78_7200.ODF")
+    odf_example("MADCP_98911_1281_0505-78_7200.ODF"),
+    odf_example("D001A001.ODF")
   )
 
   expect_warning(
@@ -48,7 +49,7 @@ test_that("read_odf_header_tbl() works", {
   )
 
   for (file in files) {
-    header <- read_odf_header(file)
+    header <- suppressMessages(read_odf_header(file))
 
     odf <- header$ODF_HEADER
     expect_vector(odf, tibble::tibble(FILE_SPECIFICATION = character()))
@@ -84,9 +85,10 @@ test_that("read_odf_header_tbl() works", {
     )
 
     history <- header$HISTORY_HEADER
-    expect_setequal(
-      names(history),
-      c("CREATION_DATE", "PROCESS")
+    # SEAODF produces some slightly invalid ODF text that makes
+    # a new column here
+    expect_true(
+      all(c("CREATION_DATE", "PROCESS") %in% names(history))
     )
     expect_vector(history$CREATION_DATE, vctrs::new_datetime(tz = "UTC"))
     expect_true(is.list(history$PROCESS))

@@ -24,9 +24,14 @@ read_odf_header <- function(file,
                             file_encoding = "latin1") {
   header_names <- names(header)
   names(header_names) <- header_names
+
+  if (missing(file)) {
+    file <- "<unknown file>"
+  }
+
   lapply(
     header_names,
-    function(x) read_odf_header_tbl(which = x, header = header)
+    function(x) read_odf_header_tbl(file = file, which = x, header = header)
   )
 }
 
@@ -54,6 +59,10 @@ read_odf_header_tbl <- function(file, which, col_types = NULL,
     return(tibble::tibble())
   }
 
+  if (missing(file)) {
+    file <- "<unknown file>"
+  }
+
   tbls <- lapply(header[[which]], odf_header_as_tibble)
   tbl <- vctrs::vec_rbind(!!! tbls)
 
@@ -64,14 +73,29 @@ read_odf_header_tbl <- function(file, which, col_types = NULL,
   }
 
   is_list <- vapply(tbl, is.list, logical(1))
-  tbl[!is_list] <- readr::type_convert(tbl[!is_list], col_types)
+
+  # this line throws important warnings that are not useful as implemented
+  # use withCallingHandlers to give these warnings some context
+  withCallingHandlers(
+    tbl[!is_list] <- readr::type_convert(tbl[!is_list], col_types),
+    warning = function(w) {
+      w_text <- paste0(w$message, collapse = "\n")
+      warning(
+        glue::glue("Parse error in { file }/{ which }:\n{ w_text }"),
+        call. = FALSE,
+        immediate. = TRUE
+      )
+      tryInvokeRestart("muffleWarning")
+    }
+  )
+
   tbl
 }
 
 odf_header_as_tibble <- function(x) {
   list_cols <- intersect(names(x), c("EVENT_COMMENTS", "PROCESS"))
   x[list_cols] <- lapply(x[list_cols], list)
-  tibble::as_tibble(x)
+  tibble::as_tibble(x, .name_repair = "unique")
 }
 
 #' @rdname read_odf_header
@@ -108,10 +132,11 @@ odf_header_cols_default <- function(...) {
     # parameter header
     PRINT_FIELD_WIDTH = readr::col_double(),
     PRINT_DECIMAL_PLACES = readr::col_double(),
+    # usually numeric but occasionally an old-style Fortran
+    # double with D+.. instead of E+..
+    DEPTH = readr::col_guess(),
     ANGLE_OF_SECTION = readr::col_double(),
     MAGNETIC_VARIATION = readr::col_double(),
-    MINIMUM_VALUE = readr::col_double(),
-    MAXIMUM_VALUE = readr::col_double(),
     NUMBER_VALID = readr::col_double(),
     NUMBER_NULL = readr::col_double(),
 

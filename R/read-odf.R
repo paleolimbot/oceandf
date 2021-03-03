@@ -37,7 +37,7 @@ read_odf <- function(file, col_names = NULL, col_types = NULL,
   # don't parse into a nice tibble unless it's needed to guess
   if (is.null(col_names) || is.null(col_types)) {
     header <- odf_parse_header(file, header_lines)
-    parameter_header <- read_odf_parameter_header(header = header)
+    parameter_header <- read_odf_parameter_header(file, header = header)
   }
 
   col_names <- col_names %||%
