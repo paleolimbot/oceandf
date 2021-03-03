@@ -120,6 +120,7 @@
     <pre class="usage"><span class='fu'>read_odf_header</span><span class='op'>(</span>
   <span class='va'>file</span>,
   header <span class='op'>=</span> <span class='fu'>odf_parse_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  default_col_types <span class='op'>=</span> <span class='fu'>odf_header_cols_default</span><span class='op'>(</span><span class='op'>)</span>,
   file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
@@ -135,8 +136,11 @@
   <span class='va'>which</span>,
   col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
   header <span class='op'>=</span> <span class='fu'>odf_parse_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  default_col_types <span class='op'>=</span> <span class='fu'>odf_header_cols_default</span><span class='op'>(</span><span class='op'>)</span>,
   file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
+
+<span class='fu'>odf_col_date</span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='fu'>odf_col_datetime</span><span class='op'>(</span><span class='op'>)</span>
 
@@ -163,6 +167,11 @@ this parameter is interpreted.</p></td>
     <tr>
       <th>header</th>
       <td><p>A previously read value obtained from <code>odf_parse_header()</code>.</p></td>
+    </tr>
+    <tr>
+      <th>default_col_types</th>
+      <td><p>A possibly more enlightened values than
+the default <code>odf_header_cols_default()</code>.</p></td>
     </tr>
     <tr>
       <th>file_encoding</th>

@@ -103,7 +103,7 @@
 <span class="co">#&gt;  9 1.46  -0.193   2.66  32.0 -0.193   25.7</span>
 <span class="co">#&gt; 10 1.56  -0.622   2.66  32.4 -0.622   26.0</span>
 <span class="co">#&gt; # ... with 552 more rows</span></code></pre></div>
-<p>Read ODF headers as a list of tables, guessing column types. This was carefully designed to report parse errors rather than fail for creatively formatted ODF files:</p>
+<p>You can also read ODF headers as a list of data frames with reasonable guesses for column types:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/read_odf_header.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
 <span class="co">#&gt; $ODF_HEADER</span>
@@ -183,6 +183,104 @@
 <span class="co">#&gt; 2 C:/Users/dunnin~ &lt;NA&gt;              PRD2002-001   BIO/Coastal ~ SP/JH          </span>
 <span class="co">#&gt; # ... with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;,</span>
 <span class="co">#&gt; #   PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span></code></pre></div>
+<p>The <code><a href="reference/read_odf.html">read_odf()</a></code> and <code><a href="reference/read_odf_header.html">read_odf_header()</a></code> functions were carefully designed to report parse errors rather than fail for creatively formatted ODF files:</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">odf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/odf_example.html">odf_example</a></span><span class="op">(</span><span class="st">"MADCP_PRD2014001_1878_2456-OPTS_7200.ODF"</span><span class="op">)</span>
+<span class="fu"><a href="reference/read_odf_header.html">read_odf_header_tbl</a></span><span class="op">(</span><span class="va">odf_file</span>, <span class="st">"CRUISE_HEADER"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: Parse error in C:/Users/dunningtond/Documents/R/win-library/4.0/oceandf/extdata/MADCP_PRD2014001_1878_2456-OPTS_7200.ODF/CRUISE_HEADER:</span>
+<span class="co">#&gt; [0, 5]: expected date like %d-%b-%Y %H:%M:%OS, but got '06-AUG-2014'</span>
+<span class="co">#&gt; Warning: Parse error in C:/Users/dunningtond/Documents/R/win-library/4.0/oceandf/extdata/MADCP_PRD2014001_1878_2456-OPTS_7200.ODF/CRUISE_HEADER:</span>
+<span class="co">#&gt; [0, 6]: expected date like %d-%b-%Y %H:%M:%OS, but got '12-AUG-2014'</span>
+<span class="co">#&gt; # A tibble: 1 x 9</span>
+<span class="co">#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION CHIEF_SCIENTIST</span>
+<span class="co">#&gt;   &lt;chr&gt;                  &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;          </span>
+<span class="co">#&gt; 1 1810                   PRD2014001    DFO BIO      JH             </span>
+<span class="co">#&gt; # ... with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span></code></pre></div>
+<p>You can override the default guesses for headers using <code><a href="reference/read_odf_header.html">odf_header_cols_default()</a></code> or <code><a href="https://readr.tidyverse.org/reference/cols.html">readr::cols()</a></code>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/read_odf_header.html">read_odf_header_tbl</a></span><span class="op">(</span>
+  <span class="va">odf_file</span>, <span class="st">"CRUISE_HEADER"</span>, 
+  col_types <span class="op">=</span> <span class="fu"><a href="reference/read_odf_header.html">odf_header_cols_default</a></span><span class="op">(</span>
+    START_DATE <span class="op">=</span> <span class="fu"><a href="reference/read_odf_header.html">odf_col_date</a></span><span class="op">(</span><span class="op">)</span>,
+    END_DATE <span class="op">=</span> <span class="fu"><a href="reference/read_odf_header.html">odf_col_date</a></span><span class="op">(</span><span class="op">)</span>
+  <span class="op">)</span>
+<span class="op">)</span>
+<span class="co">#&gt; # A tibble: 1 x 9</span>
+<span class="co">#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION CHIEF_SCIENTIST START_DATE</span>
+<span class="co">#&gt;   &lt;chr&gt;                  &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;           &lt;date&gt;    </span>
+<span class="co">#&gt; 1 1810                   PRD2014001    DFO BIO      JH              2014-08-06</span>
+<span class="co">#&gt; # ... with 4 more variables: END_DATE &lt;date&gt;, PLATFORM &lt;chr&gt;,</span>
+<span class="co">#&gt; #   CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span>
+
+<span class="fu"><a href="reference/read_odf_header.html">read_odf_header_tbl</a></span><span class="op">(</span>
+  <span class="va">odf_file</span>, <span class="st">"CRUISE_HEADER"</span>, 
+  col_types <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/cols.html">cols</a></span><span class="op">(</span>.default <span class="op">=</span> <span class="fu">col_character</span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="op">)</span>
+<span class="co">#&gt; # A tibble: 1 x 9</span>
+<span class="co">#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION CHIEF_SCIENTIST START_DATE </span>
+<span class="co">#&gt;   &lt;chr&gt;                  &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;      </span>
+<span class="co">#&gt; 1 1810                   PRD2014001    DFO BIO      JH              06-AUG-2014</span>
+<span class="co">#&gt; # ... with 4 more variables: END_DATE &lt;chr&gt;, PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;,</span>
+<span class="co">#&gt; #   CRUISE_DESCRIPTION &lt;chr&gt;</span>
+
+<span class="fu"><a href="reference/read_odf_header.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span>, default_col_types <span class="op">=</span> <span class="fu">readr</span><span class="fu">::</span><span class="fu"><a href="https://readr.tidyverse.org/reference/cols.html">cols</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; $ODF_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 1</span>
+<span class="co">#&gt;   FILE_SPECIFICATION             </span>
+<span class="co">#&gt;   &lt;chr&gt;                          </span>
+<span class="co">#&gt; 1 MADCP_PRD2014001_1878_2456_7200</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $CRUISE_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 9</span>
+<span class="co">#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION CHIEF_SCIENTIST START_DATE </span>
+<span class="co">#&gt;                    &lt;dbl&gt; &lt;chr&gt;         &lt;chr&gt;        &lt;chr&gt;           &lt;chr&gt;      </span>
+<span class="co">#&gt; 1                   1810 PRD2014001    DFO BIO      JH              06-AUG-2014</span>
+<span class="co">#&gt; # ... with 4 more variables: END_DATE &lt;chr&gt;, PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;,</span>
+<span class="co">#&gt; #   CRUISE_DESCRIPTION &lt;chr&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $EVENT_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 18</span>
+<span class="co">#&gt;   DATA_TYPE EVENT_NUMBER EVENT_QUALIFIER1 EVENT_QUALIFIER2 CREATION_DATE        </span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt; &lt;chr&gt;                </span>
+<span class="co">#&gt; 1 MADCP             1878             2456             7200 17-OCT-2016 14:20:59~</span>
+<span class="co">#&gt; # ... with 13 more variables: ORIG_CREATION_DATE &lt;chr&gt;, START_DATE_TIME &lt;chr&gt;,</span>
+<span class="co">#&gt; #   END_DATE_TIME &lt;chr&gt;, INITIAL_LATITUDE &lt;dbl&gt;, INITIAL_LONGITUDE &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   END_LATITUDE &lt;dbl&gt;, END_LONGITUDE &lt;dbl&gt;, MIN_DEPTH &lt;dbl&gt;, MAX_DEPTH &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   SAMPLING_INTERVAL &lt;dbl&gt;, SOUNDING &lt;dbl&gt;, DEPTH_OFF_BOTTOM &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   EVENT_COMMENTS &lt;list&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $INSTRUMENT_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   INST_TYPE MODEL          SERIAL_NUMBER DESCRIPTION                     </span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;                  &lt;dbl&gt; &lt;chr&gt;                           </span>
+<span class="co">#&gt; 1 ADCP      RD Instruments          2456 Sentinel 307.2 khz Version 51.40</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $HISTORY_HEADER</span>
+<span class="co">#&gt; # A tibble: 2 x 2</span>
+<span class="co">#&gt;   CREATION_DATE           PROCESS   </span>
+<span class="co">#&gt;   &lt;chr&gt;                   &lt;list&gt;    </span>
+<span class="co">#&gt; 1 17-OCT-2016 14:20:59.28 &lt;chr [63]&gt;</span>
+<span class="co">#&gt; 2 17-OCT-2016 14:20:59.70 &lt;chr [2]&gt; </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $PARAMETER_HEADER</span>
+<span class="co">#&gt; # A tibble: 5 x 14</span>
+<span class="co">#&gt;   TYPE  NAME          UNITS  CODE   NULL_VALUE PRINT_FIELD_WID~ PRINT_DECIMAL_P~</span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt;  &lt;chr&gt;       &lt;dbl&gt;            &lt;dbl&gt;            &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 SING  PIPE Time Fo~ GMT    SYTM_~        -99               10                3</span>
+<span class="co">#&gt; 2 SING  Sea Temperat~ degre~ TEMP_~        -99               10                2</span>
+<span class="co">#&gt; 3 SING  Sea Pressure~ decib~ PRES_~        -99               10                2</span>
+<span class="co">#&gt; 4 SING  Pitch Angle   degre~ PTCH_~        -99                6                2</span>
+<span class="co">#&gt; 5 SING  Roll Angle    degre~ ROLL_~        -99                6                2</span>
+<span class="co">#&gt; # ... with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   DEPTH &lt;dbl&gt;, MINIMUM_VALUE &lt;chr&gt;, MAXIMUM_VALUE &lt;chr&gt;, NUMBER_VALID &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   NUMBER_NULL &lt;dbl&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $RECORD_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 5</span>
+<span class="co">#&gt;   NUM_CALIBRATION NUM_SWING NUM_HISTORY NUM_CYCLE NUM_PARAM</span>
+<span class="co">#&gt;             &lt;dbl&gt;     &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1               0         0           1      8281         5</span></code></pre></div>
 </div>
 </div>
   </div>
