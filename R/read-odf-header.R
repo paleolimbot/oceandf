@@ -10,6 +10,8 @@
 #' @param header A previously read value obtained from [odf_parse_header()].
 #' @param header_lines A previously read value obtained from
 #'   [read_odf_header_lines()].
+#' @param default_col_types A possibly more enlightened values than
+#'   the default [odf_header_cols_default()].
 #' @param ... Overrides for the default column types.
 #'
 #' @export
@@ -21,6 +23,7 @@
 #'
 read_odf_header <- function(file,
                             header = odf_parse_header(file, file_encoding = file_encoding),
+                            default_col_types = odf_header_cols_default(),
                             file_encoding = "latin1") {
   header_names <- names(header)
   names(header_names) <- header_names
@@ -31,7 +34,12 @@ read_odf_header <- function(file,
 
   lapply(
     header_names,
-    function(x) read_odf_header_tbl(file = file, which = x, header = header)
+    function(x) read_odf_header_tbl(
+      file = file,
+      which = x,
+      header = header,
+      default_col_types = default_col_types
+    )
   )
 }
 
@@ -53,6 +61,7 @@ read_odf_parameter_header <- function(file, col_types = NULL,
 #' @export
 read_odf_header_tbl <- function(file, which, col_types = NULL,
                                 header = odf_parse_header(file, file_encoding = file_encoding),
+                                default_col_types = odf_header_cols_default(),
                                 file_encoding = "latin1") {
   if (!isTRUE(which %in% names(header))) {
     warning(glue::glue("Header '{ which[1] }' is missing."), immediate. = TRUE)
@@ -67,7 +76,7 @@ read_odf_header_tbl <- function(file, which, col_types = NULL,
   tbl <- vctrs::vec_rbind(!!! tbls)
 
   if (is.null(col_types)) {
-    col_types <- odf_header_cols_default()
+    col_types <- default_col_types
     col_types$cols <-
       col_types$cols[intersect(names(col_types$cols), names(tbl))]
   }
@@ -81,7 +90,7 @@ read_odf_header_tbl <- function(file, which, col_types = NULL,
     warning = function(w) {
       w_text <- paste0(w$message, collapse = "\n")
       warning(
-        glue::glue("Parse error in { file }/{ which }:\n{ w_text }"),
+        glue::glue("\nParse error in { file }/{ which }:\n{ w_text }\n"),
         call. = FALSE,
         immediate. = TRUE
       )
@@ -96,6 +105,12 @@ odf_header_as_tibble <- function(x) {
   list_cols <- intersect(names(x), c("EVENT_COMMENTS", "PROCESS"))
   x[list_cols] <- lapply(x[list_cols], list)
   tibble::as_tibble(x, .name_repair = "unique")
+}
+
+#' @rdname read_odf_header
+#' @export
+odf_col_date <- function() {
+  readr::col_date("%d-%b-%Y")
 }
 
 #' @rdname read_odf_header

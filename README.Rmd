@@ -41,7 +41,7 @@ odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
 read_odf(odf_file)
 ```
 
-Read ODF headers as a list of tables, guessing column types. This was carefully designed to report parse errors rather than fail for creatively formatted ODF files:
+You can also read ODF headers as a list of data frames with reasonable guesses for column types:
 
 ```{r}
 read_odf_header(odf_file)
@@ -60,4 +60,30 @@ odf_files <- c(
 odf_files %>%
   set_names() %>% 
   map_dfr(read_odf_header_tbl, "CRUISE_HEADER", .id = "file")
+```
+
+The `read_odf()` and `read_odf_header()` functions were carefully designed to report parse errors rather than fail for creatively formatted ODF files:
+
+```{r}
+odf_file <- odf_example("MADCP_PRD2014001_1878_2456-OPTS_7200.ODF")
+read_odf_header_tbl(odf_file, "CRUISE_HEADER")
+```
+
+You can override the default guesses for headers using `odf_header_cols_default()` or `readr::cols()`:
+
+```{r}
+read_odf_header_tbl(
+  odf_file, "CRUISE_HEADER", 
+  col_types = odf_header_cols_default(
+    START_DATE = odf_col_date(),
+    END_DATE = odf_col_date()
+  )
+)
+
+read_odf_header_tbl(
+  odf_file, "CRUISE_HEADER", 
+  col_types = readr::cols(.default = col_character())
+)
+
+read_odf_header(odf_file, default_col_types = readr::cols())
 ```

@@ -56,12 +56,22 @@ read_odf <- function(file, col_names = NULL, col_types = NULL,
     nrows = n_max, fileEncoding = file_encoding
   )
 
-  tibble::as_tibble(
-    readr::type_convert(
-      tbl,
-      col_types = col_types
-    )
+  # this line throws important warnings that are not useful as implemented
+  # use withCallingHandlers to give these warnings some context
+  withCallingHandlers(
+    tbl <- readr::type_convert(tbl, col_types = col_types),
+    warning = function(w) {
+      w_text <- paste0(w$message, collapse = "\n")
+      warning(
+        glue::glue("\nParse error in '{ file }':\n{ w_text }\n"),
+        call. = FALSE,
+        immediate. = TRUE
+      )
+      tryInvokeRestart("muffleWarning")
+    }
   )
+
+  tibble::as_tibble(tbl)
 }
 
 #' @rdname read_odf

@@ -11,6 +11,7 @@
 #' odf_example("CTD_PRD2002-001_26_1_DN.ODF")
 #' odf_example("CTD_PRD2003001_1482_313_UP.ODF")
 #' odf_example("MADCP_98911_1281_0505-78_7200.ODF")
+#' odf_example("MADCP_PRD2014001_1878_2456-OPTS_7200.ODF")
 #'
 odf_example <- function(path) {
   stopifnot(length(path) == 1)

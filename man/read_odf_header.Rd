@@ -4,6 +4,7 @@
 \alias{read_odf_header}
 \alias{read_odf_parameter_header}
 \alias{read_odf_header_tbl}
+\alias{odf_col_date}
 \alias{odf_col_datetime}
 \alias{odf_header_cols_default}
 \alias{odf_parse_header}
@@ -13,6 +14,7 @@
 read_odf_header(
   file,
   header = odf_parse_header(file, file_encoding = file_encoding),
+  default_col_types = odf_header_cols_default(),
   file_encoding = "latin1"
 )
 
@@ -28,8 +30,11 @@ read_odf_header_tbl(
   which,
   col_types = NULL,
   header = odf_parse_header(file, file_encoding = file_encoding),
+  default_col_types = odf_header_cols_default(),
   file_encoding = "latin1"
 )
+
+odf_col_date()
 
 odf_col_datetime()
 
@@ -50,6 +55,9 @@ downloaded. See \code{\link[readr:read_lines]{readr::read_lines()}} for a full d
 this parameter is interpreted.}
 
 \item{header}{A previously read value obtained from \code{\link[=odf_parse_header]{odf_parse_header()}}.}
+
+\item{default_col_types}{A possibly more enlightened values than
+the default \code{\link[=odf_header_cols_default]{odf_header_cols_default()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
 (latin1) is used to prevent an error involving invalid characters
