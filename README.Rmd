@@ -5,6 +5,7 @@ output: github_document
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r, include = FALSE}
+library(tidyverse)
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
@@ -20,7 +21,7 @@ knitr::opts_chunk$set(
 [![R build status](https://github.com/paleolimbot/oceandf/workflows/R-CMD-check/badge.svg)](https://github.com/paleolimbot/oceandf/actions)
 <!-- badges: end -->
 
-The goal of oceandf is to read ODF files. You can already do this using `oce::read.ctd.odf()`; this package allows slightly better header parsing and faster/more flexible reading using the [readr](https://readr.tidyverse.org) package.
+The goal of oceandf is to read ODF files. You can already do this using `oce::read.odf()` and other internal Fisheries and Oceans Canada tools; this package allows more flexible reading using the [readr](https://readr.tidyverse.org) package and using data frames wherever possible.
 
 ## Installation
 
@@ -32,13 +33,31 @@ remotes::install_github("paleolimbot/oceandf")
 ```
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+Read ODF files as tables, guessing column types and names from the PARAMTER_HEADER:
 
 ```{r example}
 library(oceandf)
 odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
-
 read_odf(odf_file)
-read_odf_parameter_header(odf_file)
-names(read_odf_header(odf_file))
+```
+
+Read ODF headers as a list of tables, guessing column types. This was carefully designed to report parse errors rather than fail for creatively formatted ODF files:
+
+```{r}
+read_odf_header(odf_file)
+```
+
+The header as a `list()` of `tibble()` makes it particularly well-suited to comparing headers from many files:
+
+```{r}
+library(tidyverse)
+
+odf_files <- c(
+  odf_example("CTD_98911_10P_11_DN.ODF"),
+  odf_example("CTD_PRD2002-001_26_1_DN.ODF")
+)
+
+odf_files %>%
+  set_names() %>% 
+  map_dfr(read_odf_header_tbl, "CRUISE_HEADER", .id = "file")
 ```
