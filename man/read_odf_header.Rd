@@ -6,19 +6,20 @@
 \alias{read_odf_header_tbl}
 \alias{odf_col_datetime}
 \alias{odf_header_cols_default}
+\alias{odf_parse_header}
 \alias{read_odf_header_lines}
 \title{Read ODF header information}
 \usage{
 read_odf_header(
   file,
-  header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
+  header = odf_parse_header(file, file_encoding = file_encoding),
   file_encoding = "latin1"
 )
 
 read_odf_parameter_header(
   file,
-  col_types = readr::cols(),
-  header = read_odf_header(file, file_encoding = file_encoding),
+  col_types = NULL,
+  header = odf_parse_header(file, file_encoding = file_encoding),
   file_encoding = "latin1"
 )
 
@@ -26,13 +27,19 @@ read_odf_header_tbl(
   file,
   which,
   col_types = NULL,
-  header = read_odf_header(file, file_encoding = file_encoding),
+  header = odf_parse_header(file, file_encoding = file_encoding),
   file_encoding = "latin1"
 )
 
 odf_col_datetime()
 
 odf_header_cols_default(...)
+
+odf_parse_header(
+  file,
+  header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
+  file_encoding = "latin1"
+)
 
 read_odf_header_lines(file, n_header = 1000, file_encoding = "latin1")
 }
@@ -42,8 +49,7 @@ read_odf_header_lines(file, n_header = 1000, file_encoding = "latin1")
 downloaded. See \code{\link[readr:read_lines]{readr::read_lines()}} for a full description of how
 this parameter is interpreted.}
 
-\item{header_lines}{A previously read value obtained from
-\code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
+\item{header}{A previously read value obtained from \code{\link[=odf_parse_header]{odf_parse_header()}}.}
 
 \item{file_encoding}{The encoding used to encode the file. The default
 (latin1) is used to prevent an error involving invalid characters
@@ -52,14 +58,15 @@ that are common in ODF files.}
 \item{col_types}{A \code{\link[readr:cols]{readr::cols()}} spec or \code{NULL} to guess
 using \code{\link[=odf_guess_col_types]{odf_guess_col_types()}}}
 
-\item{header}{A previously read value obtained from \code{\link[=read_odf_header]{read_odf_header()}}.}
-
 \item{which}{The header name (e.g., "PARAMETER_HEADER"). Most ODF
 files have an ODF_HEADER, a CRUISE_HEADER, EVENT_HEADER,
 INSTRUMENT_HEADER, HISTORY_HEADER, PARAMETER_HEADER, and
 RECORD_HEADER.}
 
 \item{...}{Overrides for the default column types.}
+
+\item{header_lines}{A previously read value obtained from
+\code{\link[=read_odf_header_lines]{read_odf_header_lines()}}.}
 
 \item{n_header}{The starting guess for number of header lines.}
 }
@@ -68,10 +75,7 @@ Read ODF header information
 }
 \examples{
 odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
-read_odf_parameter_header(odf_file)
-
+read_odf_header(odf_file)
 read_odf_header_tbl(odf_file, "CRUISE_HEADER")
-str(read_odf_header_lines(odf_file))
-str(read_odf_header(odf_file))
 
 }

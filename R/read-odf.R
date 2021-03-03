@@ -33,10 +33,10 @@ read_odf <- function(file, col_names = NULL, col_types = NULL,
                      n_max = -1,
                      file_encoding = "latin1") {
   header_lines <- read_odf_header_lines(file, file_encoding = file_encoding)
-  header <- read_odf_header(file, header_lines)
 
   # don't parse into a nice tibble unless it's needed to guess
   if (is.null(col_names) || is.null(col_types)) {
+    header <- odf_parse_header(file, header_lines)
     parameter_header <- read_odf_parameter_header(header = header)
   }
 

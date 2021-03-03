@@ -7,7 +7,7 @@
 #'   INSTRUMENT_HEADER, HISTORY_HEADER, PARAMETER_HEADER, and
 #'   RECORD_HEADER.
 #' @param n_header The starting guess for number of header lines.
-#' @param header A previously read value obtained from [read_odf_header()].
+#' @param header A previously read value obtained from [odf_parse_header()].
 #' @param header_lines A previously read value obtained from
 #'   [read_odf_header_lines()].
 #' @param ... Overrides for the default column types.
@@ -16,52 +16,24 @@
 #'
 #' @examples
 #' odf_file <- odf_example("CTD_98911_10P_11_DN.ODF")
-#' read_odf_parameter_header(odf_file)
-#'
+#' read_odf_header(odf_file)
 #' read_odf_header_tbl(odf_file, "CRUISE_HEADER")
-#' str(read_odf_header_lines(odf_file))
-#' str(read_odf_header(odf_file))
 #'
 read_odf_header <- function(file,
-                            header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
+                            header = odf_parse_header(file, file_encoding = file_encoding),
                             file_encoding = "latin1") {
-  # extract components
-  components <- stringr::str_match(
-    header_lines,
-    "^(\\s*)([A-Za-z0-9_]+\\s*=\\s*)?'?\\s*(.*?)\\s*'?\\s*,?\\s*$"
+  header_names <- names(header)
+  names(header_names) <- header_names
+  lapply(
+    header_names,
+    function(x) read_odf_header_tbl(which = x, header = header)
   )
-
-  whitespace <- components[, 2]
-  name <- stringr::str_remove(components[, 3], "\\s*=\\s*$")
-  name[is.na(name)] <- ""
-  value <- components[, 4]
-
-  # Can model with two levels of whitespace: one for top level headers
-  # and one for everything else OR declare a new top-level header
-  # whenever the indentation decreases. The second appears to be
-  # more robust with respect to slightly mangled files.
-
-  n_whitespace <- stringr::str_length(whitespace)
-  # is_top_header <- (n_whitespace == min(n_whitespace)) & (header_lines != whitespace)
-  is_top_header <- c(TRUE, diff(n_whitespace) < 0)
-  top_headers <- value[is_top_header]
-  which_top_header <- cumsum(is_top_header)
-
-  parsed <- rep(list(NULL), length(top_headers))
-  for (i in seq_along(top_headers)) {
-    value_i <- value[which_top_header == i][-1]
-    names(value_i) <- name[which_top_header == i][-1]
-    parsed[[i]] <- collapse_by_name(value_i)
-  }
-
-  names(parsed) <- top_headers
-  collapse_by_name(parsed)
 }
 
 #' @rdname read_odf_header
 #' @export
-read_odf_parameter_header <- function(file, col_types = readr::cols(),
-                                      header = read_odf_header(file, file_encoding = file_encoding),
+read_odf_parameter_header <- function(file, col_types = NULL,
+                                      header = odf_parse_header(file, file_encoding = file_encoding),
                                       file_encoding = "latin1") {
   read_odf_header_tbl(
     file,
@@ -75,7 +47,7 @@ read_odf_parameter_header <- function(file, col_types = readr::cols(),
 #' @rdname read_odf_header
 #' @export
 read_odf_header_tbl <- function(file, which, col_types = NULL,
-                                header = read_odf_header(file, file_encoding = file_encoding),
+                                header = odf_parse_header(file, file_encoding = file_encoding),
                                 file_encoding = "latin1") {
   if (!isTRUE(which %in% names(header))) {
     warning(glue::glue("Header '{ which[1] }' is missing."), immediate. = TRUE)
@@ -161,6 +133,44 @@ odf_header_cols_default <- function(...) {
   cols_list <- c(args, cols_default)[all_names]
 
   do.call(readr::cols, cols_list)
+}
+
+#' @rdname read_odf_header
+#' @export
+odf_parse_header <- function(file,
+                             header_lines = read_odf_header_lines(file, file_encoding = file_encoding),
+                             file_encoding = "latin1") {
+  # extract components
+  components <- stringr::str_match(
+    header_lines,
+    "^(\\s*)([A-Za-z0-9_]+\\s*=\\s*)?'?\\s*(.*?)\\s*'?\\s*,?\\s*$"
+  )
+
+  whitespace <- components[, 2]
+  name <- stringr::str_remove(components[, 3], "\\s*=\\s*$")
+  name[is.na(name)] <- ""
+  value <- components[, 4]
+
+  # Can model with two levels of whitespace: one for top level headers
+  # and one for everything else OR declare a new top-level header
+  # whenever the indentation decreases. The second appears to be
+  # more robust with respect to slightly mangled files.
+
+  n_whitespace <- stringr::str_length(whitespace)
+  # is_top_header <- (n_whitespace == min(n_whitespace)) & (header_lines != whitespace)
+  is_top_header <- c(TRUE, diff(n_whitespace) < 0)
+  top_headers <- value[is_top_header]
+  which_top_header <- cumsum(is_top_header)
+
+  parsed <- rep(list(NULL), length(top_headers))
+  for (i in seq_along(top_headers)) {
+    value_i <- value[which_top_header == i][-1]
+    names(value_i) <- name[which_top_header == i][-1]
+    parsed[[i]] <- collapse_by_name(value_i)
+  }
+
+  names(parsed) <- top_headers
+  collapse_by_name(parsed)
 }
 
 #' @rdname read_odf_header
