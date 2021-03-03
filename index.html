@@ -72,7 +72,7 @@
 <a href="#oceandf" class="anchor"></a>oceandf</h1></div>
 <!-- badges: start -->
 
-<p>The goal of oceandf is to read ODF files. You can already do this using <code>oce::read.ctd.odf()</code>; this package allows slightly better header parsing and faster/more flexible reading using the <a href="https://readr.tidyverse.org">readr</a> package.</p>
+<p>The goal of oceandf is to read ODF files. You can already do this using <code>oce::read.odf()</code> and other internal Fisheries and Oceans Canada tools; this package allows more flexible reading using the <a href="https://readr.tidyverse.org">readr</a> package and using data frames wherever possible.</p>
 <div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
@@ -84,43 +84,105 @@
 <div id="example" class="section level2">
 <h2 class="hasAnchor">
 <a href="#example" class="anchor"></a>Example</h2>
-<p>This is a basic example which shows you how to solve a common problem:</p>
+<p>Read ODF files as tables, guessing column types and names from the PARAMTER_HEADER:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/paleolimbot/oceandf">oceandf</a></span><span class="op">)</span>
 <span class="va">odf_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/odf_example.html">odf_example</a></span><span class="op">(</span><span class="st">"CTD_98911_10P_11_DN.ODF"</span><span class="op">)</span>
-
 <span class="fu"><a href="reference/read_odf.html">read_odf</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
 <span class="co">#&gt; # A tibble: 562 x 6</span>
-<span class="co">#&gt;    PRES      TEMP  COND  PSAL    POTM  SIGP</span>
-<span class="co">#&gt;    &lt;chr&gt;    &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 0.4210  0.509   2.67  31.4  0.509   25.2</span>
-<span class="co">#&gt;  2 0.8000 -0.134   2.68  32.1 -0.134   25.8</span>
-<span class="co">#&gt;  3 0.9890 -0.229   2.68  32.2 -0.229   25.9</span>
-<span class="co">#&gt;  4 1.0840 -0.0914  2.68  32.1 -0.0914  25.8</span>
-<span class="co">#&gt;  5 1.1790  0.317   2.67  31.6  0.317   25.4</span>
-<span class="co">#&gt;  6 1.3680  0.222   2.67  31.7  0.222   25.4</span>
-<span class="co">#&gt;  7 1.3680  0.174   2.67  31.8  0.174   25.5</span>
-<span class="co">#&gt;  8 1.3680 -0.211   2.67  32.1 -0.211   25.8</span>
-<span class="co">#&gt;  9 1.4630 -0.193   2.66  32.0 -0.193   25.7</span>
-<span class="co">#&gt; 10 1.5580 -0.622   2.66  32.4 -0.622   26.0</span>
-<span class="co">#&gt; # ... with 552 more rows</span>
-<span class="fu"><a href="reference/read_odf_header.html">read_odf_parameter_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 6 x 15</span>
-<span class="co">#&gt;   index TYPE  NAME  UNITS  WMO_CODE NULL_VALUE PRINT_FIELD_WID~ PRINT_DECIMAL_P~</span>
-<span class="co">#&gt;   &lt;int&gt; &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;  &lt;chr&gt;    &lt;chr&gt;                 &lt;dbl&gt;            &lt;dbl&gt;</span>
-<span class="co">#&gt; 1     1 SING  PRES  decib~ PRES     -.9900000~               11                4</span>
-<span class="co">#&gt; 2     2 SING  TEMP  degre~ TEMP     -.9900000~               11                4</span>
-<span class="co">#&gt; 3     3 SING  COND  mmHo   COND     -.9900000~               11                4</span>
-<span class="co">#&gt; 4     4 SING  PSAL  &lt;NA&gt;   PSAL     -.9900000~               11                4</span>
-<span class="co">#&gt; 5     5 SING  POTM  degre~ POTM     -.9900000~                8                4</span>
-<span class="co">#&gt; 6     6 SING  SIGP  kg/m*~ SIGP     -.9900000~                8                4</span>
+<span class="co">#&gt;     PRES    TEMP  COND  PSAL    POTM  SIGP</span>
+<span class="co">#&gt;    &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt; &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 0.421  0.509   2.67  31.4  0.509   25.2</span>
+<span class="co">#&gt;  2 0.8   -0.134   2.68  32.1 -0.134   25.8</span>
+<span class="co">#&gt;  3 0.989 -0.229   2.68  32.2 -0.229   25.9</span>
+<span class="co">#&gt;  4 1.08  -0.0914  2.68  32.1 -0.0914  25.8</span>
+<span class="co">#&gt;  5 1.18   0.317   2.67  31.6  0.317   25.4</span>
+<span class="co">#&gt;  6 1.37   0.222   2.67  31.7  0.222   25.4</span>
+<span class="co">#&gt;  7 1.37   0.174   2.67  31.8  0.174   25.5</span>
+<span class="co">#&gt;  8 1.37  -0.211   2.67  32.1 -0.211   25.8</span>
+<span class="co">#&gt;  9 1.46  -0.193   2.66  32.0 -0.193   25.7</span>
+<span class="co">#&gt; 10 1.56  -0.622   2.66  32.4 -0.622   26.0</span>
+<span class="co">#&gt; # ... with 552 more rows</span></code></pre></div>
+<p>Read ODF headers as a list of tables, guessing column types. This was carefully designed to report parse errors rather than fail for creatively formatted ODF files:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="reference/read_odf_header.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span>
+<span class="co">#&gt; $ODF_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 1</span>
+<span class="co">#&gt;   FILE_SPECIFICATION                </span>
+<span class="co">#&gt;   &lt;chr&gt;                             </span>
+<span class="co">#&gt; 1 D1:[MSMITH]CTD_98911_10P_11_DN.ODF</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $CRUISE_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 9</span>
+<span class="co">#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION   CHIEF_SCIENTIST</span>
+<span class="co">#&gt;   &lt;chr&gt;                  &lt;chr&gt;         &lt;chr&gt;          &lt;chr&gt;          </span>
+<span class="co">#&gt; 1 1810                   98911         OCEAN SCIENCES JH             </span>
+<span class="co">#&gt; # ... with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $EVENT_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 18</span>
+<span class="co">#&gt;   DATA_TYPE EVENT_NUMBER EVENT_QUALIFIER1 EVENT_QUALIFIER2 CREATION_DATE      </span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt;        &lt;chr&gt;            &lt;chr&gt;            &lt;dttm&gt;             </span>
+<span class="co">#&gt; 1 CTD       10P          11               DN               1998-11-19 16:07:31</span>
+<span class="co">#&gt; # ... with 13 more variables: ORIG_CREATION_DATE &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   START_DATE_TIME &lt;dttm&gt;, END_DATE_TIME &lt;dttm&gt;, INITIAL_LATITUDE &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   INITIAL_LONGITUDE &lt;dbl&gt;, END_LATITUDE &lt;dbl&gt;, END_LONGITUDE &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   MIN_DEPTH &lt;dbl&gt;, MAX_DEPTH &lt;dbl&gt;, SAMPLING_INTERVAL &lt;dbl&gt;, SOUNDING &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   DEPTH_OFF_BOTTOM &lt;dbl&gt;, EVENT_COMMENTS &lt;list&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $INSTRUMENT_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 4</span>
+<span class="co">#&gt;   INST_TYPE MODEL SERIAL_NUMBER DESCRIPTION</span>
+<span class="co">#&gt;   &lt;chr&gt;     &lt;chr&gt; &lt;chr&gt;         &lt;chr&gt;      </span>
+<span class="co">#&gt; 1 Sea-Bird  &lt;NA&gt;  253591-026    &lt;NA&gt;       </span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $HISTORY_HEADER</span>
+<span class="co">#&gt; # A tibble: 3 x 2</span>
+<span class="co">#&gt;   CREATION_DATE       PROCESS   </span>
+<span class="co">#&gt;   &lt;dttm&gt;              &lt;list&gt;    </span>
+<span class="co">#&gt; 1 1998-11-16 10:27:14 &lt;chr [26]&gt;</span>
+<span class="co">#&gt; 2 1998-11-19 15:55:53 &lt;chr [8]&gt; </span>
+<span class="co">#&gt; 3 1998-11-19 16:07:31 &lt;chr [15]&gt;</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $PARAMETER_HEADER</span>
+<span class="co">#&gt; # A tibble: 6 x 14</span>
+<span class="co">#&gt;   TYPE  NAME  UNITS    WMO_CODE NULL_VALUE   PRINT_FIELD_WID~ PRINT_DECIMAL_PLA~</span>
+<span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;                   &lt;dbl&gt;              &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 SING  PRES  decibars PRES     -.99000000D~               11                  4</span>
+<span class="co">#&gt; 2 SING  TEMP  degrees~ TEMP     -.99000000D~               11                  4</span>
+<span class="co">#&gt; 3 SING  COND  mmHo     COND     -.99000000D~               11                  4</span>
+<span class="co">#&gt; 4 SING  PSAL  &lt;NA&gt;     PSAL     -.99000000D~               11                  4</span>
+<span class="co">#&gt; 5 SING  POTM  degrees~ POTM     -.99000000D~                8                  4</span>
+<span class="co">#&gt; 6 SING  SIGP  kg/m**3  SIGP     -.99000000D~                8                  4</span>
 <span class="co">#&gt; # ... with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span>
-<span class="co">#&gt; #   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;dbl&gt;, MAXIMUM_VALUE &lt;dbl&gt;, NUMBER_VALID &lt;dbl&gt;,</span>
+<span class="co">#&gt; #   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;chr&gt;, MAXIMUM_VALUE &lt;chr&gt;, NUMBER_VALID &lt;dbl&gt;,</span>
 <span class="co">#&gt; #   NUMBER_NULL &lt;dbl&gt;</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="fu"><a href="reference/read_odf_header.html">read_odf_header</a></span><span class="op">(</span><span class="va">odf_file</span><span class="op">)</span><span class="op">)</span>
-<span class="co">#&gt; [1] "ODF_HEADER"        "CRUISE_HEADER"     "EVENT_HEADER"     </span>
-<span class="co">#&gt; [4] "INSTRUMENT_HEADER" "HISTORY_HEADER"    "PARAMETER_HEADER" </span>
-<span class="co">#&gt; [7] "RECORD_HEADER"</span></code></pre></div>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; $RECORD_HEADER</span>
+<span class="co">#&gt; # A tibble: 1 x 3</span>
+<span class="co">#&gt;   NUM_HISTORY NUM_CYCLE NUM_PARAM</span>
+<span class="co">#&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1           3       562         6</span></code></pre></div>
+<p>The header as a <code><a href="https://rdrr.io/r/base/list.html">list()</a></code> of <code>tibble()</code> makes it particularly well-suited to comparing headers from many files:</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">tidyverse</span><span class="op">)</span>
+
+<span class="va">odf_files</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span>
+  <span class="fu"><a href="reference/odf_example.html">odf_example</a></span><span class="op">(</span><span class="st">"CTD_98911_10P_11_DN.ODF"</span><span class="op">)</span>,
+  <span class="fu"><a href="reference/odf_example.html">odf_example</a></span><span class="op">(</span><span class="st">"CTD_PRD2002-001_26_1_DN.ODF"</span><span class="op">)</span>
+<span class="op">)</span>
+
+<span class="va">odf_files</span> <span class="op">%&gt;%</span>
+  <span class="fu">set_names</span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span> 
+  <span class="fu">map_dfr</span><span class="op">(</span><span class="va">read_odf_header_tbl</span>, <span class="st">"CRUISE_HEADER"</span>, .id <span class="op">=</span> <span class="st">"file"</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 2 x 10</span>
+<span class="co">#&gt;   file             COUNTRY_INSTITUT~ CRUISE_NUMBER ORGANIZATION  CHIEF_SCIENTIST</span>
+<span class="co">#&gt;   &lt;chr&gt;            &lt;chr&gt;             &lt;chr&gt;         &lt;chr&gt;         &lt;chr&gt;          </span>
+<span class="co">#&gt; 1 C:/Users/dunnin~ 1810              98911         OCEAN SCIENC~ JH             </span>
+<span class="co">#&gt; 2 C:/Users/dunnin~ &lt;NA&gt;              PRD2002-001   BIO/Coastal ~ SP/JH          </span>
+<span class="co">#&gt; # ... with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;,</span>
+<span class="co">#&gt; #   PLATFORM &lt;chr&gt;, CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span></code></pre></div>
 </div>
 </div>
   </div>

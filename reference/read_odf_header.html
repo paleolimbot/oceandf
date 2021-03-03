@@ -119,14 +119,14 @@
 
     <pre class="usage"><span class='fu'>read_odf_header</span><span class='op'>(</span>
   <span class='va'>file</span>,
-  header_lines <span class='op'>=</span> <span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  header <span class='op'>=</span> <span class='fu'>odf_parse_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
   file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
 <span class='fu'>read_odf_parameter_header</span><span class='op'>(</span>
   <span class='va'>file</span>,
-  col_types <span class='op'>=</span> <span class='fu'>readr</span><span class='fu'>::</span><span class='fu'><a href='https://readr.tidyverse.org/reference/cols.html'>cols</a></span><span class='op'>(</span><span class='op'>)</span>,
-  header <span class='op'>=</span> <span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
+  header <span class='op'>=</span> <span class='fu'>odf_parse_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
   file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
@@ -134,13 +134,19 @@
   <span class='va'>file</span>,
   <span class='va'>which</span>,
   col_types <span class='op'>=</span> <span class='cn'>NULL</span>,
-  header <span class='op'>=</span> <span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  header <span class='op'>=</span> <span class='fu'>odf_parse_header</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
   file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
 <span class='op'>)</span>
 
 <span class='fu'>odf_col_datetime</span><span class='op'>(</span><span class='op'>)</span>
 
 <span class='fu'>odf_header_cols_default</span><span class='op'>(</span><span class='va'>...</span><span class='op'>)</span>
+
+<span class='fu'>odf_parse_header</span><span class='op'>(</span>
+  <span class='va'>file</span>,
+  header_lines <span class='op'>=</span> <span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, file_encoding <span class='op'>=</span> <span class='va'>file_encoding</span><span class='op'>)</span>,
+  file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span>
+<span class='op'>)</span>
 
 <span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>file</span>, n_header <span class='op'>=</span> <span class='fl'>1000</span>, file_encoding <span class='op'>=</span> <span class='st'>"latin1"</span><span class='op'>)</span></pre>
 
@@ -155,9 +161,8 @@ downloaded. See <code><a href='https://readr.tidyverse.org/reference/read_lines.
 this parameter is interpreted.</p></td>
     </tr>
     <tr>
-      <th>header_lines</th>
-      <td><p>A previously read value obtained from
-<code>read_odf_header_lines()</code>.</p></td>
+      <th>header</th>
+      <td><p>A previously read value obtained from <code>odf_parse_header()</code>.</p></td>
     </tr>
     <tr>
       <th>file_encoding</th>
@@ -171,10 +176,6 @@ that are common in ODF files.</p></td>
 using <code><a href='read_odf.html'>odf_guess_col_types()</a></code></p></td>
     </tr>
     <tr>
-      <th>header</th>
-      <td><p>A previously read value obtained from <code>read_odf_header()</code>.</p></td>
-    </tr>
-    <tr>
       <th>which</th>
       <td><p>The header name (e.g., "PARAMETER_HEADER"). Most ODF
 files have an ODF_HEADER, a CRUISE_HEADER, EVENT_HEADER,
@@ -186,6 +187,11 @@ RECORD_HEADER.</p></td>
       <td><p>Overrides for the default column types.</p></td>
     </tr>
     <tr>
+      <th>header_lines</th>
+      <td><p>A previously read value obtained from
+<code>read_odf_header_lines()</code>.</p></td>
+    </tr>
+    <tr>
       <th>n_header</th>
       <td><p>The starting guess for number of header lines.</p></td>
     </tr>
@@ -194,8 +200,48 @@ RECORD_HEADER.</p></td>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>odf_file</span> <span class='op'>&lt;-</span> <span class='fu'><a href='odf_example.html'>odf_example</a></span><span class='op'>(</span><span class='st'>"CTD_98911_10P_11_DN.ODF"</span><span class='op'>)</span>
-<span class='fu'>read_odf_parameter_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 6 x 14</span><span>
+<span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $ODF_HEADER
+#&gt; <span style='color: #949494;'># A tibble: 1 x 1</span><span>
+#&gt;   FILE_SPECIFICATION                
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                             
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> D1:[MSMITH]CTD_98911_10P_11_DN.ODF
+#&gt; 
+#&gt; $CRUISE_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 1 x 9</span><span>
+#&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION   CHIEF_SCIENTIST
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 1810                   98911         OCEAN SCIENCES JH             
+#&gt; </span><span style='color: #949494;'># … with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;, PLATFORM &lt;chr&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span><span>
+#&gt; 
+#&gt; $EVENT_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 1 x 18</span><span>
+#&gt;   DATA_TYPE EVENT_NUMBER EVENT_QUALIFIER1 EVENT_QUALIFIER2 CREATION_DATE      
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>        </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>            </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>             
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> CTD       10P          11               DN               1998-11-19 </span><span style='color: #949494;'>16:07:31</span><span>
+#&gt; </span><span style='color: #949494;'># … with 13 more variables: ORIG_CREATION_DATE &lt;dttm&gt;, START_DATE_TIME &lt;dttm&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   END_DATE_TIME &lt;dttm&gt;, INITIAL_LATITUDE &lt;dbl&gt;, INITIAL_LONGITUDE &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   END_LATITUDE &lt;dbl&gt;, END_LONGITUDE &lt;dbl&gt;, MIN_DEPTH &lt;dbl&gt;, MAX_DEPTH &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   SAMPLING_INTERVAL &lt;dbl&gt;, SOUNDING &lt;dbl&gt;, DEPTH_OFF_BOTTOM &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   EVENT_COMMENTS &lt;list&gt;</span><span>
+#&gt; 
+#&gt; $INSTRUMENT_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 1 x 4</span><span>
+#&gt;   INST_TYPE MODEL SERIAL_NUMBER DESCRIPTION
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> Sea-Bird  </span><span style='color: #BB0000;'>NA</span><span>    253591-026    </span><span style='color: #BB0000;'>NA</span><span>         
+#&gt; 
+#&gt; $HISTORY_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 3 x 2</span><span>
+#&gt;   CREATION_DATE       PROCESS   
+#&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;dttm&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;list&gt;</span><span>    
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span> 1998-11-16 </span><span style='color: #949494;'>10:27:14</span><span> </span><span style='color: #949494;'>&lt;chr [26]&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>2</span><span> 1998-11-19 </span><span style='color: #949494;'>15:55:53</span><span> </span><span style='color: #949494;'>&lt;chr [8]&gt;</span><span> 
+#&gt; </span><span style='color: #BCBCBC;'>3</span><span> 1998-11-19 </span><span style='color: #949494;'>16:07:31</span><span> </span><span style='color: #949494;'>&lt;chr [15]&gt;</span><span>
+#&gt; 
+#&gt; $PARAMETER_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 6 x 14</span><span>
 #&gt;   TYPE  NAME  UNITS    WMO_CODE NULL_VALUE   PRINT_FIELD_WID… PRINT_DECIMAL_PLA…
 #&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span> </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                   </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>              </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
 #&gt; </span><span style='color: #BCBCBC;'>1</span><span> SING  PRES  decibars PRES     -.99000000D…               11                  4
@@ -205,163 +251,21 @@ RECORD_HEADER.</p></td>
 #&gt; </span><span style='color: #BCBCBC;'>5</span><span> SING  POTM  degrees… POTM     -.99000000D…                8                  4
 #&gt; </span><span style='color: #BCBCBC;'>6</span><span> SING  SIGP  kg/m**3  SIGP     -.99000000D…                8                  4
 #&gt; </span><span style='color: #949494;'># … with 7 more variables: ANGLE_OF_SECTION &lt;dbl&gt;, MAGNETIC_VARIATION &lt;dbl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;dbl&gt;, MAXIMUM_VALUE &lt;dbl&gt;, NUMBER_VALID &lt;dbl&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   NUMBER_NULL &lt;dbl&gt;</span><span></div><div class='input'>
-<span class='fu'>read_odf_header_tbl</span><span class='op'>(</span><span class='va'>odf_file</span>, <span class='st'>"CRUISE_HEADER"</span><span class='op'>)</span>
+#&gt; </span><span style='color: #949494;'>#   DEPTH &lt;chr&gt;, MINIMUM_VALUE &lt;chr&gt;, MAXIMUM_VALUE &lt;chr&gt;, NUMBER_VALID &lt;dbl&gt;,</span><span>
+#&gt; </span><span style='color: #949494;'>#   NUMBER_NULL &lt;dbl&gt;</span><span>
+#&gt; 
+#&gt; $RECORD_HEADER
+#&gt; </span><span style='color: #949494;'># A tibble: 1 x 3</span><span>
+#&gt;   NUM_HISTORY NUM_CYCLE NUM_PARAM
+#&gt;         </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>     </span><span style='color: #949494;font-style: italic;'>&lt;dbl&gt;</span><span>
+#&gt; </span><span style='color: #BCBCBC;'>1</span><span>           3       562         6
+#&gt; </div><div class='input'><span class='fu'>read_odf_header_tbl</span><span class='op'>(</span><span class='va'>odf_file</span>, <span class='st'>"CRUISE_HEADER"</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; </span><span style='color: #949494;'># A tibble: 1 x 9</span><span>
 #&gt;   COUNTRY_INSTITUTE_CODE CRUISE_NUMBER ORGANIZATION   CHIEF_SCIENTIST
 #&gt;   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>                  </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>          
 #&gt; </span><span style='color: #BCBCBC;'>1</span><span> 1810                   98911         OCEAN SCIENCES JH             
 #&gt; </span><span style='color: #949494;'># … with 5 more variables: START_DATE &lt;dttm&gt;, END_DATE &lt;dttm&gt;, PLATFORM &lt;chr&gt;,</span><span>
-#&gt; </span><span style='color: #949494;'>#   CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span><span></div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header_lines</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt;  chr [1:186] " ODF_HEADER," ...</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/str.html'>str</a></span><span class='op'>(</span><span class='fu'>read_odf_header</span><span class='op'>(</span><span class='va'>odf_file</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; List of 7
-#&gt;  $ ODF_HEADER       :List of 1
-#&gt;   ..$ :List of 1
-#&gt;   .. ..$ FILE_SPECIFICATION: chr "D1:[MSMITH]CTD_98911_10P_11_DN.ODF"
-#&gt;  $ CRUISE_HEADER    :List of 1
-#&gt;   ..$ :List of 9
-#&gt;   .. ..$ COUNTRY_INSTITUTE_CODE: chr "1810"
-#&gt;   .. ..$ CRUISE_NUMBER         : chr "98911"
-#&gt;   .. ..$ ORGANIZATION          : chr "OCEAN SCIENCES"
-#&gt;   .. ..$ CHIEF_SCIENTIST       : chr "JH"
-#&gt;   .. ..$ START_DATE            : chr "17-NOV-1858 00:00:00.00"
-#&gt;   .. ..$ END_DATE              : chr "17-NOV-1858 00:00:00.00"
-#&gt;   .. ..$ PLATFORM              : chr "LOUIS ST. LAURENT"
-#&gt;   .. ..$ CRUISE_NAME           : chr "BARROW STRAIT"
-#&gt;   .. ..$ CRUISE_DESCRIPTION    : chr ""
-#&gt;  $ EVENT_HEADER     :List of 1
-#&gt;   ..$ :List of 18
-#&gt;   .. ..$ DATA_TYPE         : chr "CTD"
-#&gt;   .. ..$ EVENT_NUMBER      : chr "10P"
-#&gt;   .. ..$ EVENT_QUALIFIER1  : chr "11"
-#&gt;   .. ..$ EVENT_QUALIFIER2  : chr "DN"
-#&gt;   .. ..$ CREATION_DATE     : chr "19-NOV-1998 16:07:31.45"
-#&gt;   .. ..$ ORIG_CREATION_DATE: chr "16-NOV-1998 10:27:10.02"
-#&gt;   .. ..$ START_DATE_TIME   : chr "11-AUG-1998 23:53:19.00"
-#&gt;   .. ..$ END_DATE_TIME     : chr "12-AUG-1998 00:02:40.00"
-#&gt;   .. ..$ INITIAL_LATITUDE  : chr "74.2734"
-#&gt;   .. ..$ INITIAL_LONGITUDE : chr "-90.7461"
-#&gt;   .. ..$ END_LATITUDE      : chr "74.2734"
-#&gt;   .. ..$ END_LONGITUDE     : chr "-90.7461"
-#&gt;   .. ..$ MIN_DEPTH         : chr "0.4"
-#&gt;   .. ..$ MAX_DEPTH         : chr "233.6"
-#&gt;   .. ..$ SAMPLING_INTERVAL : chr "1.00000000"
-#&gt;   .. ..$ SOUNDING          : chr "238.0"
-#&gt;   .. ..$ DEPTH_OFF_BOTTOM  : chr "-99.9"
-#&gt;   .. ..$ EVENT_COMMENTS    : chr [1:2] "16-NOV-1998 10:27:14 HOSE NOT ON PUMP." "16-NOV-1998 10:27:14 STATION REPEATED AUGUST 12."
-#&gt;  $ INSTRUMENT_HEADER:List of 1
-#&gt;   ..$ :List of 4
-#&gt;   .. ..$ INST_TYPE    : chr "Sea-Bird"
-#&gt;   .. ..$ MODEL        : chr ""
-#&gt;   .. ..$ SERIAL_NUMBER: chr "253591-026"
-#&gt;   .. ..$ DESCRIPTION  : chr ""
-#&gt;  $ HISTORY_HEADER   :List of 3
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "16-NOV-1998 10:27:14.59"
-#&gt;   .. ..$ PROCESS      : chr [1:26] "SELECT_FILE,FILE_SPEC=D1:[MSMITH]BRST9810.CNV" "OPEN_ASCII_FILE" "HEADER_LOGGER" "READ_ASCII_DATA,HEADER_LINES=0," ...
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "19-NOV-1998 15:55:53.39"
-#&gt;   .. ..$ PROCESS      : chr [1:8] "SELECT_FILE,FI=D1:[MSMITH.DN]CTD_98911*.ODF" "OPEN_ASCII_FILE" "READ_ASCII_HEADERS" "READ_ASCII_DATA,FILE_FORMAT=ODF" ...
-#&gt;   ..$ :List of 2
-#&gt;   .. ..$ CREATION_DATE: chr "19-NOV-1998 16:07:31.49"
-#&gt;   .. ..$ PROCESS      : chr [1:15] "SELECT_FILE,FI=D5:[MSMITH]CTD_98911*.ODF" "OPEN_ASCII_FILE" "READ_ASCII_HEADERS" "READ_ASCII_DATA,FILE_FORMAT=ODF" ...
-#&gt;  $ PARAMETER_HEADER :List of 6
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "PRES"
-#&gt;   .. ..$ UNITS               : chr "decibars"
-#&gt;   .. ..$ WMO_CODE            : chr "PRES"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "0.4210"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "233.6350"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "TEMP"
-#&gt;   .. ..$ UNITS               : chr "degrees C"
-#&gt;   .. ..$ WMO_CODE            : chr "TEMP"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "-1.7735"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "0.5086"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "COND"
-#&gt;   .. ..$ UNITS               : chr "mmHo"
-#&gt;   .. ..$ WMO_CODE            : chr "COND"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "2.5819"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "2.7704"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "PSAL"
-#&gt;   .. ..$ UNITS               : chr ""
-#&gt;   .. ..$ WMO_CODE            : chr "PSAL"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "11"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "31.4122"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "33.7702"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "POTM"
-#&gt;   .. ..$ UNITS               : chr "degrees C"
-#&gt;   .. ..$ WMO_CODE            : chr "POTM"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "8"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "-1.7753"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "0.5086"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;   ..$ :List of 14
-#&gt;   .. ..$ TYPE                : chr "SING"
-#&gt;   .. ..$ NAME                : chr "SIGP"
-#&gt;   .. ..$ UNITS               : chr "kg/m**3"
-#&gt;   .. ..$ WMO_CODE            : chr "SIGP"
-#&gt;   .. ..$ NULL_VALUE          : chr "-.99000000D+02"
-#&gt;   .. ..$ PRINT_FIELD_WIDTH   : chr "8"
-#&gt;   .. ..$ PRINT_DECIMAL_PLACES: chr "4"
-#&gt;   .. ..$ ANGLE_OF_SECTION    : chr "0.0"
-#&gt;   .. ..$ MAGNETIC_VARIATION  : chr "0.0"
-#&gt;   .. ..$ DEPTH               : chr "0.00000000D+00"
-#&gt;   .. ..$ MINIMUM_VALUE       : chr "25.1871"
-#&gt;   .. ..$ MAXIMUM_VALUE       : chr "27.1418"
-#&gt;   .. ..$ NUMBER_VALID        : chr "562"
-#&gt;   .. ..$ NUMBER_NULL         : chr "0"
-#&gt;  $ RECORD_HEADER    :List of 1
-#&gt;   ..$ :List of 3
-#&gt;   .. ..$ NUM_HISTORY: chr "3"
-#&gt;   .. ..$ NUM_CYCLE  : chr "562"
-#&gt;   .. ..$ NUM_PARAM  : chr "6"</div><div class='input'>
+#&gt; </span><span style='color: #949494;'>#   CRUISE_NAME &lt;chr&gt;, CRUISE_DESCRIPTION &lt;chr&gt;</span><span></div><div class='input'>
 </div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
